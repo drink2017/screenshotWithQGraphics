@@ -112,7 +112,7 @@ changeSelectItemType selectItem::mousePointIn(QPointF pos){
     }else if(handles[6].contains(pos)){
         return RECT_BOTTOM_LEFT;
     }else if(handles[7].contains(pos)){
-        return RECT_RIGHT;
+        return RECT_LEFT;
     }else{
         return RECT_NO;
     }
@@ -171,7 +171,6 @@ void selectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             screenshotView::getInstance()->getControl()->updateButtonStatu();
             screenshotView::getInstance()->getControl()->hide();
             screenshotView::getInstance()->getControl()->myColorWidget->hide();
-
         }
     }
 }

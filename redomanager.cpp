@@ -14,3 +14,71 @@ redoManager* redoManager::getInstance(){
     return instance;
 }
 
+void redoManager::pushOrder(order *aOrder){
+    redo.enqueue(aOrder);
+}
+
+bool redoManager::isEmpty(){
+    if(redo.isEmpty()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+order* redoManager::popOrder(){
+    order* aOrder = redo.back();
+    redo.pop_back();
+    return  aOrder;
+}
+
+void redoManager::clear(){
+    redo.clear();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

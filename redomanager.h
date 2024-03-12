@@ -10,6 +10,13 @@ class redoManager
 public:
     static redoManager* getInstance();
 
+    void pushOrder(order* aOrder);
+    order* popOrder();
+
+    bool isEmpty();
+
+    void clear();
+
 private:
     static redoManager* instance;
 

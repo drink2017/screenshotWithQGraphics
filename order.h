@@ -14,6 +14,9 @@ public:
     QQueue<QGraphicsItem*> getAddItem();
     QQueue<QGraphicsItem*> getDeleteItem();
 
+    void clearAddItem();
+    void clearDeleteItem();
+
 private:
     QQueue<QGraphicsItem*> addItem;
     QQueue<QGraphicsItem*> deleteItem;

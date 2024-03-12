@@ -1,6 +1,7 @@
 #include "controlwidget.h"
 #include "screenshotview.h"
 #include "undomanager.h"
+#include "redomanager.h"
 
 #include <commandmanager.h>
 #include <QGuiApplication>
@@ -171,6 +172,7 @@ void controlWidget::connectToSlots(){
     connect(pRectButton,&QPushButton::clicked,this,&controlWidget::rectButtonStatu);
     //----------------------------------------
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
+    connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
     //------------------------------------------
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
 }
@@ -210,14 +212,55 @@ void controlWidget::rectButtonStatu(){
 //------------------------------
 void controlWidget::undo(){
     undoManager* myUndoManager = undoManager::getInstance();
+    redoManager* myRedoManager = redoManager::getInstance();
     if(myUndoManager->isEmpty()){
         return;
     }else{
         order* undoOrder = myUndoManager->popOrder();
         QQueue<QGraphicsItem*> addItem = undoOrder->getAddItem();
         QQueue<QGraphicsItem*> deleteItem = undoOrder->getDeleteItem();
-        QGraphicsItem* item = addItem.back();
-        screenshotView::getInstance()->getScene()->removeItem(item);
+        if(!addItem.isEmpty() && deleteItem.isEmpty()){
+            QGraphicsItem* item = addItem.back();
+            screenshotView::getInstance()->getScene()->removeItem(item);
+            undoOrder->clearAddItem();
+            undoOrder->addToDeleteItem(item);
+            myRedoManager->pushOrder(undoOrder);
+        }else if(!addItem.isEmpty() && !deleteItem.isEmpty()){
+            if(typeid (*deleteItem.back()) == typeid (myRectItem)){
+                myRectItem* beforeMoveItem = dynamic_cast<myRectItem*>(deleteItem.back());
+                myRectItem* afterMoveItem = dynamic_cast<myRectItem*>(addItem.back());
+                QRectF afterMoveRect = afterMoveItem->rect();
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setRect(beforeMoveItem->rect());
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                beforeMoveItem->setRect(afterMoveRect);
+                beforeMoveItem->setPos(afterMovePos);
+                undoOrder->clearAddItem();
+                undoOrder->clearDeleteItem();
+                undoOrder->addToAddItem(afterMoveItem);
+                undoOrder->addToDeleteItem(beforeMoveItem);
+                myRedoManager->pushOrder(undoOrder);
+            }
+        }
+    }
+}
+
+void controlWidget::redo(){
+    undoManager* myUndoManager = undoManager::getInstance();
+    redoManager* myRedoManager = redoManager::getInstance();
+    if(myRedoManager->isEmpty()){
+        return;
+    }else{
+        order* redoOrder = myRedoManager->popOrder();
+        QQueue<QGraphicsItem*> addItem = redoOrder->getAddItem();
+        QQueue<QGraphicsItem*> deleteItem = redoOrder->getDeleteItem();
+        if(addItem.isEmpty() && !deleteItem.isEmpty()){
+            QGraphicsItem* item = deleteItem.back();
+            screenshotView::getInstance()->getScene()->addItem(item);
+            redoOrder->clearDeleteItem();
+            redoOrder->addToAddItem(item);
+            myUndoManager->pushOrder(redoOrder);
+        }
     }
 }
 //--------------------------------

@@ -20,3 +20,11 @@ QQueue<QGraphicsItem*> order::getAddItem(){
 QQueue<QGraphicsItem*> order::getDeleteItem(){
     return deleteItem;
 }
+
+void order::clearAddItem(){
+    addItem.clear();
+}
+
+void order::clearDeleteItem(){
+    deleteItem.clear();
+}

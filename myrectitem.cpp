@@ -2,6 +2,12 @@
 #include "commandmanager.h"
 #include "screenshotview.h"
 
+//----------------------------
+#include "order.h"
+#include "undomanager.h"
+#include "redomanager.h"
+//----------------------------
+
 #include <QBrush>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
@@ -133,6 +139,15 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         if(type == rect_no){
             setCursor(Qt::SizeAllCursor);
         }
+
+        //-------------------------------
+        myRectItem* moveBeforeItem = new myRectItem(this->rect());
+        moveBeforeItem->setPen(this->pen());
+        moveBeforeItem->setFlags(this->flags());
+        order* moveOrder = new order();
+        moveOrder->addToDeleteItem(moveBeforeItem);
+        undoManager::getInstance()->pushOrder(moveOrder);
+        //---------------------------------
     }else{
         QList<QGraphicsItem*> selectedItems = screenshotView::getInstance()->getScene()->selectedItems();
         if (!selectedItems.isEmpty()) {
@@ -279,6 +294,23 @@ void myRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(this->isSelected()){
         QGraphicsRectItem::mouseReleaseEvent(event);
         commandManager::getInstance()->setEditingItem(false);
+
+        //--------------------------------
+        order* moveOrder = undoManager::getInstance()->popOrder();
+        myRectItem* moveBeforeItem = dynamic_cast<myRectItem*>(moveOrder->getDeleteItem().back());
+        qDebug() << "moveBeforeItem:" << moveBeforeItem->pos();
+        qDebug() << "moveAfterItem:" << this->pos();
+        qDebug() << (moveBeforeItem->rect() == this->rect());
+        if(moveBeforeItem->rect() == this->rect() && moveBeforeItem->pos() == this->pos()){
+            QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
+            delete deleteItem.back();
+            delete moveOrder;
+        }else{
+            moveOrder->addToAddItem(this);
+            undoManager::getInstance()->pushOrder(moveOrder);
+            redoManager::getInstance()->clear();
+        }
+        //--------------------------------
     }
 }
 

@@ -4,6 +4,7 @@
 //----------------------
 #include "order.h"
 #include "undomanager.h"
+#include "redomanager.h"
 //----------------------
 
 #include <QGuiApplication>
@@ -96,7 +97,8 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
     if(state->isDrawingRect() && event->button() == Qt::LeftButton && !state->isEditingItem()){
         commandManager::getInstance()->drawRectEnd = event->pos();
 
-        myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
+        //myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
+        myRectItem* newRectItem = new myRectItem((currentRectItem->rect()));
         newRectItem->setPen(commandManager::getInstance()->rectPen);
         scene->addItem(newRectItem);
 
@@ -106,7 +108,9 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         order* addOrder = new order();
         addOrder->addToAddItem(newRectItem);
         undoManager* myUndoManager = undoManager::getInstance();
+        redoManager* myRedoManager = redoManager::getInstance();
         myUndoManager->pushOrder(addOrder);
+        myRedoManager->clear();
         //------------------------------------
     }
     QGraphicsView::mouseReleaseEvent(event);
