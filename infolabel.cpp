@@ -1,0 +1,38 @@
+#include "infolabel.h"
+#include "screenshotview.h"
+
+infoLabel::infoLabel()
+{
+    setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+    QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+    QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+    setLocation(selectStart,selectEnd);
+    setAlignment(Qt::AlignCenter);
+    setText(getInfo(selectStart,selectEnd));
+}
+
+void infoLabel::setLocation(QPoint selectStart, QPoint selectEnd){
+    if(selectEnd.x() < selectStart.x() && selectEnd.y() < selectStart.y()){
+        this->setGeometry(selectEnd.x(),selectEnd.y()-21,100,21);
+    }else if(selectEnd.x() < selectStart.x()){
+        this->setGeometry(selectEnd.x(),selectStart.y()-21,100,21);
+    }else if(selectEnd.y() < selectStart.y()){
+        this->setGeometry(selectStart.x(),selectEnd.y()-21,100,21);
+    }else{
+        this->setGeometry(selectStart.x(),selectStart.y()-21,100,21);
+    }
+}
+
+QString infoLabel::getInfo(QPoint selectStart, QPoint selectEnd){
+    int width = abs(selectEnd.x()-selectStart.x());
+    int height = abs(selectEnd.y()-selectStart.y());
+    return QString::number(width) + "*" + QString::number(height);
+}
+
+void infoLabel::updateInfoLabel(){
+    QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+    QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+    setLocation(selectStart,selectEnd);
+    setText(getInfo(selectStart,selectEnd));
+}
