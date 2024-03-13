@@ -50,10 +50,8 @@ private:
 
 public slots:
     void rectButtonStatu();
-    //--------------
     void undo();
     void redo();
-    //--------------
 
 signals:
     void enableDrawRect();

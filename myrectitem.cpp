@@ -1,12 +1,9 @@
 #include "myrectitem.h"
 #include "commandmanager.h"
 #include "screenshotview.h"
-
-//----------------------------
 #include "order.h"
 #include "undomanager.h"
 #include "redomanager.h"
-//----------------------------
 
 #include <QBrush>
 #include <QPen>
@@ -139,8 +136,6 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         if(type == rect_no){
             setCursor(Qt::SizeAllCursor);
         }
-
-        //-------------------------------
         myRectItem* moveBeforeItem = new myRectItem(this->rect());
         moveBeforeItem->setPos(this->pos());
         moveBeforeItem->setPen(this->pen());
@@ -148,7 +143,6 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         order* moveOrder = new order();
         moveOrder->addToDeleteItem(moveBeforeItem);
         undoManager::getInstance()->pushOrder(moveOrder);
-        //---------------------------------
     }else{
         QList<QGraphicsItem*> selectedItems = screenshotView::getInstance()->getScene()->selectedItems();
         if (!selectedItems.isEmpty()) {
@@ -294,9 +288,21 @@ void myRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     setCursor(Qt::ArrowCursor);
     if(this->isSelected()){
         QGraphicsRectItem::mouseReleaseEvent(event);
+        QRectF sceneRect = this->mapToScene(this->boundingRect()).boundingRect();
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
+        if(sceneRect.left() < selectRect.x()){
+            this->setX(selectRect.x() - this->rect().x());
+        }
+        if(sceneRect.top() < selectRect.top()){
+            this->setY(selectRect.y() - this->rect().y());
+        }
+        if(sceneRect.right() > selectRect.right()){
+            this->setX(selectRect.right() - this->rect().right());
+        }
+        if(sceneRect.bottom() > selectRect.bottom()){
+            this->setY(selectRect.bottom() - this->rect().bottom());
+        }
         commandManager::getInstance()->setEditingItem(false);
-
-        //--------------------------------
         order* moveOrder = undoManager::getInstance()->popOrder();
         myRectItem* moveBeforeItem = dynamic_cast<myRectItem*>(moveOrder->getDeleteItem().back());
         if(moveBeforeItem->rect() == this->rect() && moveBeforeItem->pos() == this->pos()){
@@ -308,7 +314,6 @@ void myRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             undoManager::getInstance()->pushOrder(moveOrder);
             redoManager::getInstance()->clear();
         }
-        //--------------------------------
     }
 }
 
@@ -357,20 +362,6 @@ pointIn myRectItem::mousePointIn(QPointF pos){
         return rect_no;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

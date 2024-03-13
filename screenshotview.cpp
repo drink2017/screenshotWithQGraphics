@@ -1,11 +1,8 @@
 #include "screenshotview.h"
 #include "commandmanager.h"
-
-//----------------------
 #include "order.h"
 #include "undomanager.h"
 #include "redomanager.h"
-//----------------------
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -97,21 +94,18 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
     if(state->isDrawingRect() && event->button() == Qt::LeftButton && !state->isEditingItem()){
         commandManager::getInstance()->drawRectEnd = event->pos();
 
-        //myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
-        myRectItem* newRectItem = new myRectItem((currentRectItem->rect()));
+        myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
         newRectItem->setPen(commandManager::getInstance()->rectPen);
         scene->addItem(newRectItem);
 
         currentRectItem->setRect(QRectF());
 
-        //------------------------------------
         order* addOrder = new order();
         addOrder->addToAddItem(newRectItem);
         undoManager* myUndoManager = undoManager::getInstance();
         redoManager* myRedoManager = redoManager::getInstance();
         myUndoManager->pushOrder(addOrder);
         myRedoManager->clear();
-        //------------------------------------
     }
     QGraphicsView::mouseReleaseEvent(event);
 }
