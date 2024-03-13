@@ -142,6 +142,7 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         //-------------------------------
         myRectItem* moveBeforeItem = new myRectItem(this->rect());
+        moveBeforeItem->setPos(this->pos());
         moveBeforeItem->setPen(this->pen());
         moveBeforeItem->setFlags(this->flags());
         order* moveOrder = new order();
@@ -298,9 +299,6 @@ void myRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         //--------------------------------
         order* moveOrder = undoManager::getInstance()->popOrder();
         myRectItem* moveBeforeItem = dynamic_cast<myRectItem*>(moveOrder->getDeleteItem().back());
-        qDebug() << "moveBeforeItem:" << moveBeforeItem->pos();
-        qDebug() << "moveAfterItem:" << this->pos();
-        qDebug() << (moveBeforeItem->rect() == this->rect());
         if(moveBeforeItem->rect() == this->rect() && moveBeforeItem->pos() == this->pos()){
             QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
             delete deleteItem.back();

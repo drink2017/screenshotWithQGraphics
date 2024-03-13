@@ -21,11 +21,12 @@ public:
     myRectItem(QGraphicsItem* parent = nullptr);
     myRectItem(const QRectF& rect, QGraphicsItem* parent = nullptr);
 
+    void updateEllipseHandles();
+
 private:
     QList<QGraphicsEllipseItem*> ellipseHandles;
 
     void createEllipseHandles();
-    void updateEllipseHandles();
     void showEllipseHandles();
     void hideEllipseHandles();
 

@@ -226,13 +226,15 @@ void controlWidget::undo(){
             undoOrder->addToDeleteItem(item);
             myRedoManager->pushOrder(undoOrder);
         }else if(!addItem.isEmpty() && !deleteItem.isEmpty()){
-            if(typeid (*deleteItem.back()) == typeid (myRectItem)){
+            auto& itemHasDeleted = *(deleteItem.back());
+            if(typeid (itemHasDeleted) == typeid (myRectItem)){
                 myRectItem* beforeMoveItem = dynamic_cast<myRectItem*>(deleteItem.back());
                 myRectItem* afterMoveItem = dynamic_cast<myRectItem*>(addItem.back());
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
                 afterMoveItem->setPos(beforeMoveItem->pos());
+                afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
                 beforeMoveItem->setPos(afterMovePos);
                 undoOrder->clearAddItem();
@@ -260,6 +262,24 @@ void controlWidget::redo(){
             redoOrder->clearDeleteItem();
             redoOrder->addToAddItem(item);
             myUndoManager->pushOrder(redoOrder);
+        }else if(!addItem.isEmpty() && !deleteItem.isEmpty()){
+            auto& itemHasDeleted = *(deleteItem.back());
+            if(typeid (itemHasDeleted) == typeid (myRectItem)){
+                myRectItem* beforeMoveItem = dynamic_cast<myRectItem*>(deleteItem.back());
+                myRectItem* afterMoveItem = dynamic_cast<myRectItem*>(addItem.back());
+                QRectF afterMoveRect = afterMoveItem->rect();
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setRect(beforeMoveItem->rect());
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                afterMoveItem->updateEllipseHandles();
+                beforeMoveItem->setRect(afterMoveRect);
+                beforeMoveItem->setPos(afterMovePos);
+                redoOrder->clearAddItem();
+                redoOrder->clearDeleteItem();
+                redoOrder->addToAddItem(afterMoveItem);
+                redoOrder->addToDeleteItem(beforeMoveItem);
+                myUndoManager->pushOrder(redoOrder);
+            }
         }
     }
 }
