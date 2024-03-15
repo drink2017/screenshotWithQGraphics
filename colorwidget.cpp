@@ -253,6 +253,9 @@ void colorWidget::slotOnXiButton(){
         case widgetType::rect:
             settings->setRectWidth(2);
             break;
+        case widgetType::ellipse:
+            settings->setEllipseWidth(2);
+            break;
         default:
             break;
         }
@@ -268,6 +271,9 @@ void colorWidget::slotOnZhongButton(){
         switch (type) {
         case widgetType::rect:
             settings->setRectWidth(4);
+            break;
+        case widgetType::ellipse:
+            settings->setEllipseWidth(4);
             break;
         default:
             break;
@@ -285,6 +291,9 @@ void colorWidget::slotOnCuButton(){
         case widgetType::rect:
             settings->setRectWidth(6);
             break;
+        case widgetType::ellipse:
+            settings->setEllipseWidth(6);
+            break;
         default:
             break;
         }
@@ -301,6 +310,7 @@ void colorWidget::slotOnBlackButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::black);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -324,6 +334,7 @@ void colorWidget::slotOnDarkGrayButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::darkGray);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -347,6 +358,7 @@ void colorWidget::slotOnDarkRedButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::darkRed);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -370,6 +382,7 @@ void colorWidget::slotOnOrangeButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(QColor(255,165,0));
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -393,6 +406,7 @@ void colorWidget::slotOnDarkGreenButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::darkGreen);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -416,6 +430,7 @@ void colorWidget::slotOnDarkBlueButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::darkBlue);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -439,6 +454,7 @@ void colorWidget::slotOnDarkMagentaButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::darkMagenta);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -462,6 +478,7 @@ void colorWidget::slotOnDarkCyanButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::darkCyan);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -485,6 +502,7 @@ void colorWidget::slotOnWhiteButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::white);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -508,6 +526,7 @@ void colorWidget::slotOnLightGrayButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::lightGray);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -531,6 +550,7 @@ void colorWidget::slotOnRedButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::red);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -554,6 +574,7 @@ void colorWidget::slotOnYellowButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::yellow);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -577,6 +598,7 @@ void colorWidget::slotOnGreenButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::green);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -600,6 +622,7 @@ void colorWidget::slotOnBlueButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::blue);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -623,6 +646,7 @@ void colorWidget::slotOnMagentaButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::magenta);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
@@ -646,6 +670,7 @@ void colorWidget::slotOnCyanButton(){
         color = settings->getRectColor().name();
         break;
     case widgetType::ellipse:
+        settings->setEllipseColor(Qt::cyan);
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
