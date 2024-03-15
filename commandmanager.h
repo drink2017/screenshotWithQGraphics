@@ -15,6 +15,8 @@ public:
     void setSelectingArea(bool selectingArea);
     bool isDrawingRect();
     void setDrawingRect(bool drawingRect);
+    bool isDrawingEllipse();
+    void setDrawingEllipse(bool drawingEllipse);
     bool isEditingItem();
     void setEditingItem(bool editingItem);
 
@@ -22,7 +24,10 @@ public:
 
     QPoint drawRectStart;
     QPoint drawRectEnd;
+    QPoint drawEllipseStart;
+    QPoint drawEllipseEnd;
     QPen rectPen;
+    QPen ellipsePen;
 
 private:
     static commandManager* instance;
@@ -33,10 +38,13 @@ private:
     bool selectingArea = true;
     bool drawingRect = false;
     bool editingItem = false;
+    bool drawingEllipse = false;
 
 public slots:
     void enableDrawRect();
     void disableDrawRect();
+    void enableDrawEllipse();
+    void disableDrawEllipse();
     void quit();
 };
 

@@ -50,12 +50,15 @@ private:
 
 public slots:
     void rectButtonStatu();
+    void roundButtonStatu();
     void undo();
     void redo();
 
 signals:
     void enableDrawRect();
     void disableDrawRect();
+    void enableDrawRound();
+    void disableDrawRound();
     void quit();
 };
 

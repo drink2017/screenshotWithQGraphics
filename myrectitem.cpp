@@ -162,7 +162,7 @@ void myRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     if(type == rect_top_left){
         setCursor(Qt::SizeFDiagCursor);
-        QRectF now = QRectF();
+        QRectF now;
         if(event->pos().x() < before.bottomRight().x() && event->pos().y() < before.bottomRight().y()){
             now.setTopLeft(event->pos());
             now.setBottomRight(before.bottomRight());

@@ -7,7 +7,7 @@ Settings::Settings()
     rectWidth = 2;
 
     ellipseColor = Qt::black;
-    ellipseColor = 2;
+    ellipseWidth = 2;
 
     arrowColor = Qt::black;
     arrowWidth = 2;

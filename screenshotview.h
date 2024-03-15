@@ -45,6 +45,7 @@ private:
 
     //要画的图元
     QGraphicsRectItem* currentRectItem = new QGraphicsRectItem(QRectF());
+    QGraphicsEllipseItem* currentEllipseItem = new QGraphicsEllipseItem(QRectF());
 
     // QWidget interface
 protected:

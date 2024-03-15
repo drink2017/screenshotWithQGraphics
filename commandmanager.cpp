@@ -33,8 +33,16 @@ void commandManager::setDrawingRect(bool drawingRect){
     this->drawingRect = drawingRect;
 }
 
+bool commandManager::isDrawingEllipse(){
+    return drawingEllipse;
+}
+
+void commandManager::setDrawingEllipse(bool drawingEllipse){
+    this->drawingEllipse = drawingEllipse;
+}
+
 bool commandManager::isEditingItem(){
-    return  editingItem;
+    return editingItem;
 }
 
 void commandManager::setEditingItem(bool editingItem){
@@ -44,6 +52,8 @@ void commandManager::setEditingItem(bool editingItem){
 void commandManager::connectToControlWidget(){
     connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawRect,this,&commandManager::enableDrawRect);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawRect,this,&commandManager::disableDrawRect);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawRound,this,&commandManager::enableDrawEllipse);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawRound,this,&commandManager::disableDrawEllipse);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::quit,this,&commandManager::quit);
 }
 
@@ -53,6 +63,14 @@ void commandManager::enableDrawRect(){
 
 void commandManager::disableDrawRect(){
     drawingRect = false;
+}
+
+void commandManager::enableDrawEllipse(){
+    drawingEllipse = true;
+}
+
+void commandManager::disableDrawEllipse(){
+    drawingEllipse = false;
 }
 
 void commandManager::quit(){

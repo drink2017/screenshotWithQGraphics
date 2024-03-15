@@ -21,6 +21,7 @@ SOURCES += \
     controlwidget.cpp \
     infolabel.cpp \
     main.cpp \
+    myellipseitem.cpp \
     myrectitem.cpp \
     order.cpp \
     redomanager.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     commandmanager.h \
     controlwidget.h \
     infolabel.h \
+    myellipseitem.h \
     myrectitem.h \
     order.h \
     redomanager.h \

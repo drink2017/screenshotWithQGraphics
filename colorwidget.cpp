@@ -108,11 +108,35 @@ void colorWidget::setInitialButton(){
         switch (settings->getRectWidth()) {
         case 2:
             xiButton->setChecked(true);
+            zhongButton->setChecked(false);
+            cuButton->setChecked(false);
             break;
         case 4:
+            xiButton->setChecked(false);
             zhongButton->setChecked(true);
+            cuButton->setChecked(false);
             break;
         case 6:
+            xiButton->setChecked(false);
+            zhongButton->setChecked(false);
+            cuButton->setChecked(true);
+            break;
+        }
+    case widgetType::ellipse:
+        switch (settings->getEllipseWidth()) {
+        case 2:
+            xiButton->setChecked(true);
+            zhongButton->setChecked(false);
+            cuButton->setChecked(false);
+            break;
+        case 4:
+            xiButton->setChecked(false);
+            zhongButton->setChecked(true);
+            cuButton->setChecked(false);
+            break;
+        case 6:
+            xiButton->setChecked(false);
+            zhongButton->setChecked(false);
             cuButton->setChecked(true);
             break;
         }

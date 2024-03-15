@@ -4,6 +4,7 @@
 #include "undomanager.h"
 #include "redomanager.h"
 #include "myrectitem.h"
+#include "myellipseitem.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -25,6 +26,7 @@ screenshotView::screenshotView()
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     scene->addItem(currentRectItem);
+    scene->addItem(currentEllipseItem);
 }
 
 screenshotView* screenshotView::getInstance(){
@@ -54,6 +56,12 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
         commandManager::getInstance()->rectPen.setWidth(control->myColorWidget->settings->getRectWidth());
         currentRectItem->setPen(commandManager::getInstance()->rectPen);
     }
+    if(state->isDrawingEllipse() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+        commandManager::getInstance()->drawEllipseStart = event->pos();
+        commandManager::getInstance()->ellipsePen.setColor(control->myColorWidget->settings->getEllipseColor());
+        commandManager::getInstance()->ellipsePen.setWidth(control->myColorWidget->settings->getEllipseWidth());
+        currentEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
+    }
     QGraphicsView::mousePressEvent(event);
 }
 
@@ -76,6 +84,17 @@ void screenshotView::mouseMoveEvent(QMouseEvent *event)
             currentRectItem->setRect(QRect(QPoint(commandManager::getInstance()->drawRectStart.x(),event->pos().y()),QPoint(event->pos().x(),commandManager::getInstance()->drawRectStart.y())));
         }else{
             currentRectItem->setRect(QRect(commandManager::getInstance()->drawRectStart,event->pos()));
+        }
+    }
+    if(state->isDrawingEllipse() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
+        if(event->pos().x() < commandManager::getInstance()->drawEllipseStart.x() && event->pos().y() < commandManager::getInstance()->drawEllipseStart.y()){
+            currentEllipseItem->setRect(QRect(event->pos(),commandManager::getInstance()->drawEllipseStart));
+        }else if(event->pos().x() < commandManager::getInstance()->drawEllipseStart.x()){
+            currentEllipseItem->setRect(QRect(QPoint(event->pos().x(),commandManager::getInstance()->drawEllipseStart.y()),QPoint(commandManager::getInstance()->drawEllipseStart.x(),event->pos().y())));
+        }else if(event->pos().y() <commandManager::getInstance()->drawEllipseStart.x()){
+            currentEllipseItem->setRect(QRect(QPoint(commandManager::getInstance()->drawEllipseStart.x(),event->pos().y()),QPoint(event->pos().x(),commandManager::getInstance()->drawEllipseStart.y())));
+        }else{
+            currentEllipseItem->setRect(QRect(commandManager::getInstance()->drawEllipseStart,event->pos()));
         }
     }
     QGraphicsView::mouseMoveEvent(event);
@@ -109,6 +128,16 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         redoManager* myRedoManager = redoManager::getInstance();
         myUndoManager->pushOrder(addOrder);
         myRedoManager->clear();
+    }
+    if(state->isDrawingEllipse() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+        commandManager::getInstance()->drawEllipseEnd = event->pos();
+
+        myEllipseItem* newEllipseItem = new myEllipseItem(QRectF(selectStart,selectEnd).intersected(currentEllipseItem->rect()));
+        newEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
+
+        scene->addItem(newEllipseItem);
+
+        currentEllipseItem->setRect(QRectF());
     }
     QGraphicsView::mouseReleaseEvent(event);
 }

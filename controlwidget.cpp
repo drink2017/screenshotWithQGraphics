@@ -96,6 +96,8 @@ void controlWidget::setButtons(){
     pRoundButton = new QPushButton(this);
     pRoundButton->setToolTip("圆");
     pRoundButton->setFixedSize(QSize(32,32));
+    pRoundButton->setCheckable(true);
+    pRoundButton->setChecked(false);
     QIcon roundIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\dry-clean.png");
     pRoundButton->setIcon(roundIcon);
 
@@ -163,15 +165,36 @@ void controlWidget::addButtonsToLayout(){
 
 void controlWidget::connectToSlots(){
     connect(pRectButton,&QPushButton::clicked,this,&controlWidget::rectButtonStatu);
+    connect(pRoundButton,&QPushButton::clicked,this,&controlWidget::roundButtonStatu);
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
     connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
 }
 
 void controlWidget::rectButtonStatu(){
+    pRoundButton->setChecked(false);
     if(pRectButton->isChecked()){
         emit enableDrawRect();
+        emit disableDrawRound();
         myColorWidget->setType(widgetType::rect);
+        myColorWidget->show();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }else{
+        myColorWidget->hide();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }
+}
+
+void controlWidget::roundButtonStatu(){
+    pRectButton->setChecked(false);
+    if(pRoundButton->isChecked()){
+        emit enableDrawRound();
+        emit disableDrawRect();
+        myColorWidget->setType(widgetType::ellipse);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
         QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
