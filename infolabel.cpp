@@ -13,14 +13,11 @@ infoLabel::infoLabel()
 }
 
 void infoLabel::setLocation(QPoint selectStart, QPoint selectEnd){
-    if(selectEnd.x() < selectStart.x() && selectEnd.y() < selectStart.y()){
-        this->setGeometry(selectEnd.x(),selectEnd.y()-21,100,21);
-    }else if(selectEnd.x() < selectStart.x()){
-        this->setGeometry(selectEnd.x(),selectStart.y()-21,100,21);
-    }else if(selectEnd.y() < selectStart.y()){
-        this->setGeometry(selectStart.x(),selectEnd.y()-21,100,21);
+    QRect selectRect = QRect(selectStart,selectEnd);
+    if(selectRect.top() < 21){
+        this->setGeometry(selectRect.topLeft().x(),selectRect.topLeft().y(),100,21);
     }else{
-        this->setGeometry(selectStart.x(),selectStart.y()-21,100,21);
+        this->setGeometry(selectRect.topLeft().x(),selectRect.topLeft().y()-21,100,21);
     }
 }
 

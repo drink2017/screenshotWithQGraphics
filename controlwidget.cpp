@@ -23,15 +23,7 @@ controlWidget::controlWidget(QWidget *parent) : QWidget(parent)
     myColorWidget->hide();
 
     //设置位置
-    if(selectEnd.x() < selectStart.x() && selectEnd.y() < selectStart.y()){
-        setLocation(selectEnd,selectStart);
-    }else if(selectEnd.x() < selectStart.x()){
-        setLocation(QPoint(selectEnd.x(),selectStart.y()),QPoint(selectStart.x(),selectEnd.y()));
-    }else if(selectEnd.y() < selectStart.y()){
-        setLocation(QPoint(selectStart.x(),selectEnd.y()),QPoint(selectEnd.x(),selectStart.y()));
-    }else{
-        setLocation(selectStart,selectEnd);
-    }
+    setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
 
     setButtons();
     pLayout = new QHBoxLayout(this);
@@ -171,10 +163,8 @@ void controlWidget::addButtonsToLayout(){
 
 void controlWidget::connectToSlots(){
     connect(pRectButton,&QPushButton::clicked,this,&controlWidget::rectButtonStatu);
-    //----------------------------------------
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
     connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
-    //------------------------------------------
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
 }
 
@@ -185,32 +175,15 @@ void controlWidget::rectButtonStatu(){
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
         QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
-        if(selectEnd.x() < selectStart.x() && selectEnd.y() < selectStart.y()){
-            setLocation(selectEnd,selectStart);
-        }else if(selectEnd.x() < selectStart.x()){
-            setLocation(QPoint(selectEnd.x(),selectStart.y()),QPoint(selectStart.x(),selectEnd.y()));
-        }else if(selectEnd.y() < selectStart.y()){
-            setLocation(QPoint(selectStart.x(),selectEnd.y()),QPoint(selectEnd.x(),selectStart.y()));
-        }else{
-            setLocation(selectStart,selectEnd);
-        }
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
     }else{
         myColorWidget->hide();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
         QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
-        if(selectEnd.x() < selectStart.x() && selectEnd.y() < selectStart.y()){
-            setLocation(selectEnd,selectStart);
-        }else if(selectEnd.x() < selectStart.x()){
-            setLocation(QPoint(selectEnd.x(),selectStart.y()),QPoint(selectStart.x(),selectEnd.y()));
-        }else if(selectEnd.y() < selectStart.y()){
-            setLocation(QPoint(selectStart.x(),selectEnd.y()),QPoint(selectEnd.x(),selectStart.y()));
-        }else{
-            setLocation(selectStart,selectEnd);
-        }
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
     }
 }
 
-//------------------------------
 void controlWidget::undo(){
     undoManager* myUndoManager = undoManager::getInstance();
     redoManager* myRedoManager = redoManager::getInstance();
@@ -284,7 +257,6 @@ void controlWidget::redo(){
         }
     }
 }
-//--------------------------------
 
 QRect controlWidget::getLocationRect(){
     return locationRect;
