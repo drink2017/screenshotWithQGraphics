@@ -23,6 +23,9 @@ public:
 
     void updateEllipseHandles();
 
+    void setNowRect(QRectF nowRect);
+    QRectF getNowRect();
+
 private:
     QList<QGraphicsEllipseItem*> ellipseHandles;
 
@@ -36,6 +39,8 @@ private:
     pointIn mousePointIn(QPointF pos);
     pointIn type;
     QRectF before;
+
+    QRectF nowRect;
 
     // QGraphicsItem interface
 public:

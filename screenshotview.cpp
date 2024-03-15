@@ -3,6 +3,7 @@
 #include "order.h"
 #include "undomanager.h"
 #include "redomanager.h"
+#include "myrectitem.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -96,6 +97,8 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
 
         myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
         newRectItem->setPen(commandManager::getInstance()->rectPen);
+        newRectItem->setNowRect(newRectItem->rect());
+
         scene->addItem(newRectItem);
 
         currentRectItem->setRect(QRectF());

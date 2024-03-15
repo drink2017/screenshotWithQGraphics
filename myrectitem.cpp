@@ -292,15 +292,29 @@ void myRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
         if(sceneRect.left() < selectRect.x()){
             this->setX(selectRect.x() - this->rect().x());
+            sceneRect.translate(selectRect.x() - sceneRect.x(),0);
+            setNowRect(sceneRect);
         }
         if(sceneRect.top() < selectRect.top()){
             this->setY(selectRect.y() - this->rect().y());
+            sceneRect.translate(0,selectRect.y() - sceneRect.top());
+            setNowRect(sceneRect);
         }
         if(sceneRect.right() > selectRect.right()){
             this->setX(selectRect.right() - this->rect().right());
+            sceneRect.translate(selectRect.right() - sceneRect.right(),0);
+            setNowRect(sceneRect);
         }
         if(sceneRect.bottom() > selectRect.bottom()){
             this->setY(selectRect.bottom() - this->rect().bottom());
+            sceneRect.translate(0,selectRect.bottom() - sceneRect.bottom());
+            setNowRect(sceneRect);
+        }
+        if(sceneRect.left() > selectRect.x() &&
+           sceneRect.top() > selectRect.top() &&
+           sceneRect.right() < selectRect.right() &&
+           sceneRect.bottom() < selectRect.bottom()){
+            setNowRect(sceneRect);
         }
         commandManager::getInstance()->setEditingItem(false);
         order* moveOrder = undoManager::getInstance()->popOrder();
@@ -363,6 +377,13 @@ pointIn myRectItem::mousePointIn(QPointF pos){
     }
 }
 
+void myRectItem::setNowRect(QRectF nowRect){
+    this->nowRect = nowRect;
+}
+
+QRectF myRectItem::getNowRect(){
+    return nowRect;
+}
 
 
 

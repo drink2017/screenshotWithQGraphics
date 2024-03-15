@@ -40,6 +40,11 @@ private:
 
     void updateSelectPoints();
 
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
+
     // QGraphicsItem interface
 protected:
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;

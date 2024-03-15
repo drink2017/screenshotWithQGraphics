@@ -4,7 +4,6 @@
 #include "selectitem.h"
 #include "infolabel.h"
 #include "controlwidget.h"
-#include "myrectitem.h"
 
 #include <QGraphicsView>
 
@@ -45,7 +44,7 @@ private:
     controlWidget* control;
 
     //要画的图元
-    myRectItem* currentRectItem = new myRectItem(QRectF());
+    QGraphicsRectItem* currentRectItem = new QGraphicsRectItem(QRectF());
 
     // QWidget interface
 protected:

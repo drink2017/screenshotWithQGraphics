@@ -1,6 +1,7 @@
 #include "selectitem.h"
 #include "screenshotview.h"
 #include "commandmanager.h"
+#include "myrectitem.h"
 
 #include <QPen>
 #include <QGraphicsSceneMouseEvent>
@@ -123,7 +124,41 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     type = mousePointIn(event->pos());
     if(type != RECT_NO){
         commandManager::getInstance()->disableDrawRect();
+        isChaningArea = true;
+
+        QList<myRectItem*> editedRectItems;
+        foreach(QGraphicsItem* item,this->scene()->items()){
+            if(myRectItem* editedRectItem = dynamic_cast<myRectItem*>(item)){
+                if(editedRectItem->flags() & QGraphicsItem::ItemIsMovable){
+                    editedRectItems.append(editedRectItem);
+                }
+            }
+        }
+
+        minX = 10000;
+        minY = 10000;
+        maxX = 0;
+        maxY = 0;
+
+        if(!editedRectItems.isEmpty()){
+            foreach(myRectItem* editedRectItem,editedRectItems){
+                if(editedRectItem->getNowRect().x() < minX){
+                    minX = editedRectItem->getNowRect().x();
+                }
+                if(editedRectItem->getNowRect().y() < minY){
+                    minY = editedRectItem->getNowRect().y();
+                }
+                if((editedRectItem->getNowRect().x()+editedRectItem->getNowRect().width()) > maxX){
+                    maxX = editedRectItem->getNowRect().x()+editedRectItem->getNowRect().width();
+                }
+                if((editedRectItem->getNowRect().y()+editedRectItem->getNowRect().height()) > maxY){
+                    maxY = editedRectItem->getNowRect().y()+editedRectItem->getNowRect().height();
+                }
+            }
+        }
     }
+
+    //这一部分可以简化
     QList<QGraphicsItem*> selectedItems = screenshotView::getInstance()->getScene()->selectedItems();
     if (!selectedItems.isEmpty()) {
         foreach (QGraphicsItem* item, selectedItems) {
@@ -135,35 +170,104 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void selectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(finishSelect){
-        isChaningArea = true;
         QPoint oldSelectStart = screenshotView::getInstance()->getSelectStart();
         QPoint oldSelectEnd = screenshotView::getInstance()->getSelectEnd();
         if(type == RECT_TOP_LEFT){
-            this->setPath(getShadowPath(QPoint(event->pos().toPoint()),oldSelectEnd));
-            screenshotView::getInstance()->setSelectStart(event->pos());
+            if(event->pos().x() > minX && event->pos().y() > minY){
+                this->setPath(getShadowPath(QPoint(minX,minY),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(QPointF(minX,minY));
+            }else if(event->pos().x() > minX){
+                this->setPath(getShadowPath(QPoint(minX,event->pos().y()),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(QPointF(minX,event->pos().y()));
+            }else if(event->pos().y() > minY){
+                this->setPath(getShadowPath(QPoint(event->pos().x(),minY),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(QPointF(event->pos().x(),minY));
+            }else{
+                this->setPath(getShadowPath(QPoint(event->pos().toPoint()),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(event->pos());
+            }
         }else if(type == RECT_TOP){
-            this->setPath(getShadowPath(QPoint(oldSelectStart.x(),event->pos().y()),oldSelectEnd));
-            screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),event->pos().y()));
+            if(event->pos().y() > minY){
+                this->setPath(getShadowPath(QPoint(oldSelectStart.x(),minY),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),minY));
+            }else{
+                this->setPath(getShadowPath(QPoint(oldSelectStart.x(),event->pos().y()),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),event->pos().y()));
+            }
         }else if(type == RECT_TOP_RIGHT){
-            this->setPath(getShadowPath(QPoint(oldSelectStart.x(),event->pos().y()),QPoint(event->pos().x(),oldSelectEnd.y())));
-            screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),event->pos().y()));
-            screenshotView::getInstance()->setSelectEnd(QPoint(event->pos().x(),oldSelectEnd.y()));
+            if(event->pos().x() < maxX && event->pos().y() > minY){
+                this->setPath(getShadowPath(QPoint(oldSelectStart.x(),minY),QPoint(maxX,oldSelectEnd.y())));
+                screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),minY));
+                screenshotView::getInstance()->setSelectEnd(QPoint(maxX,oldSelectEnd.y()));
+            }else if(event->pos().x() < maxX){
+                this->setPath(getShadowPath(QPoint(oldSelectStart.x(),event->pos().y()),QPoint(maxX,oldSelectEnd.y())));
+                screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),event->pos().y()));
+                screenshotView::getInstance()->setSelectEnd(QPoint(maxX,oldSelectEnd.y()));
+            }else if(event->pos().y() > minY){
+                this->setPath(getShadowPath(QPoint(oldSelectStart.x(),minY),QPoint(event->pos().x(),oldSelectEnd.y())));
+                screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),minY));
+                screenshotView::getInstance()->setSelectEnd(QPoint(event->pos().x(),oldSelectEnd.y()));
+            }else{
+                this->setPath(getShadowPath(QPoint(oldSelectStart.x(),event->pos().y()),QPoint(event->pos().x(),oldSelectEnd.y())));
+                screenshotView::getInstance()->setSelectStart(QPoint(oldSelectStart.x(),event->pos().y()));
+                screenshotView::getInstance()->setSelectEnd(QPoint(event->pos().x(),oldSelectEnd.y()));
+            }
         }else if(type == RECT_RIGHT){
-            this->setPath(getShadowPath(oldSelectStart,QPoint(event->pos().x(),oldSelectEnd.y())));
-            screenshotView::getInstance()->setSelectEnd(QPoint(event->pos().x(),oldSelectEnd.y()));
+            if(event->pos().x() < maxX){
+                this->setPath(getShadowPath(oldSelectStart,QPoint(maxX,oldSelectEnd.y())));
+                screenshotView::getInstance()->setSelectEnd(QPoint(maxX,oldSelectEnd.y()));
+            }else{
+                this->setPath(getShadowPath(oldSelectStart,QPoint(event->pos().x(),oldSelectEnd.y())));
+                screenshotView::getInstance()->setSelectEnd(QPoint(event->pos().x(),oldSelectEnd.y()));
+            }
         }else if(type == RECT_BOTTOM_RIGHT){
-            this->setPath(getShadowPath(oldSelectStart,event->pos().toPoint()));
-            screenshotView::getInstance()->setSelectEnd(event->pos());
+            if(event->pos().x() < maxX && event->pos().y() < maxY){
+                this->setPath(getShadowPath(oldSelectStart,QPoint(maxX,maxY)));
+                screenshotView::getInstance()->setSelectEnd(QPoint(maxX,maxY));
+            }else if(event->pos().x() < maxX){
+                this->setPath(getShadowPath(oldSelectStart,QPoint(maxX,event->pos().y())));
+                screenshotView::getInstance()->setSelectEnd(QPoint(maxX,event->pos().y()));
+            }else if(event->pos().y() < maxY){
+                this->setPath(getShadowPath(oldSelectStart,QPoint(event->pos().x(),maxY)));
+                screenshotView::getInstance()->setSelectEnd(QPoint(event->pos().x(),maxY));
+            }else{
+                this->setPath(getShadowPath(oldSelectStart,event->pos().toPoint()));
+                screenshotView::getInstance()->setSelectEnd(event->pos());
+            }
         }else if(type == RECT_BOTTOM){
-            this->setPath(getShadowPath(oldSelectStart,QPoint(oldSelectEnd.x(),event->pos().y())));
-            screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),event->pos().y()));
+            if(event->pos().y() < maxY){
+                this->setPath(getShadowPath(oldSelectStart,QPoint(oldSelectEnd.x(),maxY)));
+                screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),maxY));
+            }else{
+                this->setPath(getShadowPath(oldSelectStart,QPoint(oldSelectEnd.x(),event->pos().y())));
+                screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),event->pos().y()));
+            }
         }else if(type == RECT_BOTTOM_LEFT){
-            this->setPath(getShadowPath(QPoint(event->pos().x(),oldSelectStart.y()),QPoint(oldSelectEnd.x(),event->pos().y())));
-            screenshotView::getInstance()->setSelectStart(QPoint(event->pos().x(),oldSelectStart.y()));
-            screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),event->pos().y()));
+            if(event->pos().x() > minX && event->pos().y() < maxY){
+                this->setPath(getShadowPath(QPoint(minX,oldSelectStart.y()),QPoint(oldSelectEnd.x(),maxY)));
+                screenshotView::getInstance()->setSelectStart(QPoint(minX,oldSelectStart.y()));
+                screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),maxY));
+            }else if(event->pos().x() > minX){
+                this->setPath(getShadowPath(QPoint(minX,oldSelectStart.y()),QPoint(oldSelectEnd.x(),event->pos().y())));
+                screenshotView::getInstance()->setSelectStart(QPoint(minX,oldSelectStart.y()));
+                screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),event->pos().y()));
+            }else if(event->pos().y() < maxY){
+                this->setPath(getShadowPath(QPoint(event->pos().x(),oldSelectStart.y()),QPoint(oldSelectEnd.x(),maxY)));
+                screenshotView::getInstance()->setSelectStart(QPoint(event->pos().x(),oldSelectStart.y()));
+                screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),maxY));
+            }else{
+                this->setPath(getShadowPath(QPoint(event->pos().x(),oldSelectStart.y()),QPoint(oldSelectEnd.x(),event->pos().y())));
+                screenshotView::getInstance()->setSelectStart(QPoint(event->pos().x(),oldSelectStart.y()));
+                screenshotView::getInstance()->setSelectEnd(QPoint(oldSelectEnd.x(),event->pos().y()));
+            }
         }else if(type == RECT_LEFT){
-            this->setPath(getShadowPath(QPoint(event->pos().x(),oldSelectStart.y()),oldSelectEnd));
-            screenshotView::getInstance()->setSelectStart(QPoint(event->pos().x(),oldSelectStart.y()));
+            if(event->pos().x() > minX){
+                this->setPath(getShadowPath(QPoint(minX,oldSelectStart.y()),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(QPoint(minX,oldSelectStart.y()));
+            }else{
+                this->setPath(getShadowPath(QPoint(event->pos().x(),oldSelectStart.y()),oldSelectEnd));
+                screenshotView::getInstance()->setSelectStart(QPoint(event->pos().x(),oldSelectStart.y()));
+            }
         }
         if(type != RECT_NO){
             updateRectHandles();

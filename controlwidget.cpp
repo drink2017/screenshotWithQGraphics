@@ -2,6 +2,7 @@
 #include "screenshotview.h"
 #include "undomanager.h"
 #include "redomanager.h"
+#include "myrectitem.h"
 
 #include <commandmanager.h>
 #include <QGuiApplication>
