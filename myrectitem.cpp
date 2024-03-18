@@ -32,7 +32,7 @@ void myRectItem::createEllipseHandles(){
     for(int i = 0;i < 8;i++){
         QGraphicsEllipseItem* ellipseHandle = new QGraphicsEllipseItem(0,0,10,10,this);
         ellipseHandle->setBrush(QBrush(Qt::white));
-        ellipseHandle->setPen(QPen(Qt::black));
+        ellipseHandle->setPen(QPen(Qt::red));
         ellipseHandles.append(ellipseHandle);
     }
 
@@ -83,25 +83,13 @@ void myRectItem::hideEllipseHandles(){
 
 void myRectItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    QRectF rect = this->rect();
-    QList<QRectF> handles = {
-        QRectF(rect.left()-5,rect.top()-5,10,10),
-        QRectF((rect.left()+rect.right())/2-5,rect.top()-5,10,10),
-        QRectF(rect.right()-5,rect.top()-5,10,10),
-        QRectF(rect.right()-5,(rect.top()+rect.bottom())/2-5,10,10),
-        QRectF(rect.right()-5,rect.bottom()-5,10,10),
-        QRectF((rect.left()+rect.right())/2-5,rect.bottom()-5,10,10),
-        QRectF(rect.left()-5,rect.bottom()-5,10,10),
-        QRectF(rect.left()-5,(rect.top()+rect.bottom())/2-5,10,10)
-    };
-
-    if((handles[0].contains(event->pos()) && ellipseHandles[0]->isVisible()) || (handles[4].contains(event->pos()) && ellipseHandles[4]->isVisible())){
+    if((mousePointIn(event->pos()) == rect_top_left && ellipseHandles[0]->isVisible()) || (mousePointIn(event->pos()) == rect_bottom_right && ellipseHandles[4]->isVisible())){
         setCursor(Qt::SizeFDiagCursor);
-    }else if((handles[1].contains(event->pos()) && ellipseHandles[1]->isVisible()) || (handles[5].contains(event->pos()) && ellipseHandles[5]->isVisible())){
+    }else if((mousePointIn(event->pos()) == rect_top && ellipseHandles[1]->isVisible()) || (mousePointIn(event->pos()) == rect_bottom && ellipseHandles[5]->isVisible())){
         setCursor(Qt::SizeVerCursor);
-    }else if((handles[2].contains(event->pos()) && ellipseHandles[2]->isVisible()) || (handles[6].contains(event->pos()) && ellipseHandles[6]->isVisible())){
+    }else if((mousePointIn(event->pos()) == rect_top_right && ellipseHandles[2]->isVisible()) || (mousePointIn(event->pos()) == rect_bottom_left && ellipseHandles[6]->isVisible())){
         setCursor(Qt::SizeBDiagCursor);
-    }else if((handles[3].contains(event->pos()) && ellipseHandles[3]->isVisible()) || (handles[7].contains(event->pos()) && ellipseHandles[7]->isVisible())){
+    }else if((mousePointIn(event->pos()) == rect_right && ellipseHandles[3]->isVisible()) || (mousePointIn(event->pos()) == rect_left && ellipseHandles[7]->isVisible())){
         setCursor(Qt::SizeHorCursor);
     }else if(isMouseOnBoundary(event->pos())){
         setCursor(Qt::SizeAllCursor);
@@ -110,22 +98,6 @@ void myRectItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     }
 }
 
-QPainterPath myRectItem::getShadowPath(QPoint selectStart,QPoint selectEnd){
-    QPainterPath globalPath;
-    globalPath.lineTo(QGuiApplication::primaryScreen()->geometry().width(),0);
-    globalPath.lineTo(QGuiApplication::primaryScreen()->geometry().width(),QGuiApplication::primaryScreen()->geometry().height());
-    globalPath.lineTo(0,QGuiApplication::primaryScreen()->geometry().height());
-    globalPath.closeSubpath();
-    QPainterPath shadowPath;
-    shadowPath.moveTo(selectStart);
-    shadowPath.lineTo(selectEnd.x(),selectStart.y());
-    shadowPath.lineTo(selectEnd);
-    shadowPath.lineTo(selectStart.x(),selectEnd.y());
-    shadowPath.closeSubpath();
-    return globalPath.subtracted(shadowPath);
-}
-
-
 void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(isMouseOnBoundary(event->pos())){
@@ -133,9 +105,6 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         commandManager::getInstance()->setEditingItem(true);
         type = mousePointIn(event->pos());
         before = this->rect();
-        if(type == rect_no){
-            setCursor(Qt::SizeAllCursor);
-        }
         myRectItem* moveBeforeItem = new myRectItem(this->rect());
         moveBeforeItem->setPos(this->pos());
         moveBeforeItem->setPen(this->pen());
@@ -144,13 +113,7 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         moveOrder->addToDeleteItem(moveBeforeItem);
         undoManager::getInstance()->pushOrder(moveOrder);
     }else{
-        QList<QGraphicsItem*> selectedItems = screenshotView::getInstance()->getScene()->selectedItems();
-        if (!selectedItems.isEmpty()) {
-            foreach (QGraphicsItem* item, selectedItems) {
-                item->setSelected(false);
-            }
-        }
-
+        this->scene()->clearSelection();
         type = mousePointIn(event->pos());
     }
 }
@@ -332,10 +295,10 @@ void myRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 }
 
 bool myRectItem::isMouseOnBoundary(const QPointF &pos) const{
-    if((pos.y() >= this->rect().y()-5 && pos.y() <= this->rect().y()+5 && pos.x() >= this->rect().x()-5 && pos.x() <= this->rect().right()+5) ||
-       (pos.x() >= this->rect().x()-5 && pos.x() <= this->rect().x()+5 && pos.y() >= this->rect().y()-5 && pos.y() <= this->rect().bottom()+5) ||
-       (pos.y() >= this->rect().bottom()-5 && pos.y() <= this->rect().bottom()+5 && pos.x() >= this->rect().x()-5 && pos.x() <= this->rect().right()+5) ||
-       (pos.x() >= this->rect().right()-5 && pos.x() <= this->rect().right()+5 && pos.y() >= this->rect().y()-5 && pos.y() <= this->rect().bottom()+5)
+    if((pos.y() <= this->rect().y()+5) ||
+       (pos.x() <= this->rect().left()+5) ||
+       (pos.x() >= this->rect().right()-5) ||
+       (pos.y() >= this->rect().bottom()-5)
             ){
         return true;
     }else{

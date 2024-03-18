@@ -33,7 +33,6 @@ private:
     void showEllipseHandles();
     void hideEllipseHandles();
 
-    QPainterPath getShadowPath(QPoint selectStart,QPoint selectEnd);
     bool isMouseOnBoundary(const QPointF& pos) const;
 
     pointIn mousePointIn(QPointF pos);
