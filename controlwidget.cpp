@@ -3,6 +3,7 @@
 #include "undomanager.h"
 #include "redomanager.h"
 #include "myrectitem.h"
+#include "myellipseitem.h"
 
 #include <commandmanager.h>
 #include <QGuiApplication>
@@ -239,6 +240,21 @@ void controlWidget::undo(){
                 undoOrder->addToAddItem(afterMoveItem);
                 undoOrder->addToDeleteItem(beforeMoveItem);
                 myRedoManager->pushOrder(undoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myEllipseItem)){
+                myEllipseItem* beforeMoveItem = dynamic_cast<myEllipseItem*>(deleteItem.back());
+                myEllipseItem* afterMoveItem = dynamic_cast<myEllipseItem*>(addItem.back());
+                QRectF afterMoveRect = afterMoveItem->rect();
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setRect(beforeMoveItem->rect());
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                afterMoveItem->updateEllipseHandles();
+                beforeMoveItem->setRect(afterMoveRect);
+                beforeMoveItem->setPos(afterMovePos);
+                undoOrder->clearAddItem();
+                undoOrder->clearDeleteItem();
+                undoOrder->addToAddItem(afterMoveItem);
+                undoOrder->addToDeleteItem(beforeMoveItem);
+                myRedoManager->pushOrder(undoOrder);
             }
         }
     }
@@ -270,6 +286,21 @@ void controlWidget::redo(){
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
+                beforeMoveItem->setPos(afterMovePos);
+                redoOrder->clearAddItem();
+                redoOrder->clearDeleteItem();
+                redoOrder->addToAddItem(afterMoveItem);
+                redoOrder->addToDeleteItem(beforeMoveItem);
+                myUndoManager->pushOrder(redoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myEllipseItem)){
+                myEllipseItem* beforeMoveItem = dynamic_cast<myEllipseItem*>(deleteItem.back());
+                myEllipseItem* afterMoveItem = dynamic_cast<myEllipseItem*>(addItem.back());
+                QRectF afterMOveRect = afterMoveItem->rect();
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setRect(beforeMoveItem->rect());
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                afterMoveItem->updateEllipseHandles();
+                beforeMoveItem->setRect(afterMOveRect);
                 beforeMoveItem->setPos(afterMovePos);
                 redoOrder->clearAddItem();
                 redoOrder->clearDeleteItem();

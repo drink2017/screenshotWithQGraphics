@@ -133,6 +133,13 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         newEllipseItem->setNowRect(newEllipseItem->rect());
         scene->addItem(newEllipseItem);
         currentEllipseItem->setRect(QRectF());
+
+        order* addOrder = new order();
+        addOrder->addToAddItem(newEllipseItem);
+        undoManager* myUndoManager = undoManager::getInstance();
+        redoManager* myRedoManager = redoManager::getInstance();
+        myUndoManager->pushOrder(addOrder);
+        myRedoManager->clear();
     }
     QGraphicsView::mouseReleaseEvent(event);
 }

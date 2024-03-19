@@ -105,6 +105,7 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         commandManager::getInstance()->setEditingItem(true);
         type = mousePointIn(event->pos());
         before = this->rect();
+
         myRectItem* moveBeforeItem = new myRectItem(this->rect());
         moveBeforeItem->setPos(this->pos());
         moveBeforeItem->setPen(this->pen());
@@ -280,6 +281,7 @@ void myRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             setNowRect(sceneRect);
         }
         commandManager::getInstance()->setEditingItem(false);
+
         order* moveOrder = undoManager::getInstance()->popOrder();
         myRectItem* moveBeforeItem = dynamic_cast<myRectItem*>(moveOrder->getDeleteItem().back());
         if(moveBeforeItem->rect() == this->rect() && moveBeforeItem->pos() == this->pos()){

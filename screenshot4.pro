@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     colorwidget.cpp \
+    command.cpp \
     commandmanager.cpp \
     controlwidget.cpp \
     infolabel.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
 
 HEADERS += \
     colorwidget.h \
+    command.h \
     commandmanager.h \
     controlwidget.h \
     infolabel.h \

@@ -1,6 +1,9 @@
 #include "myellipseitem.h"
 #include "commandmanager.h"
 #include "screenshotview.h"
+#include "order.h"
+#include "undomanager.h"
+#include "redomanager.h"
 
 #include <QBrush>
 #include <QPen>
@@ -104,6 +107,14 @@ void myEllipseItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         commandManager::getInstance()->setEditingItem(true);
         type = mousePointIn(event->pos());
         before = this->rect();
+
+        myEllipseItem* moveBeforeItem = new myEllipseItem(this->rect());
+        moveBeforeItem->setPos(this->pos());
+        moveBeforeItem->setPen(this->pen());
+        moveBeforeItem->setFlags(this->flags());
+        order* moveOrder = new order();
+        moveOrder->addToDeleteItem(moveBeforeItem);
+        undoManager::getInstance()->pushOrder(moveOrder);
     }else{
         this->scene()->clearSelection();
         type = mousePointIn(event->pos());
@@ -170,8 +181,7 @@ void myEllipseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     setCursor(Qt::ArrowCursor);
     if(this->isSelected()){
-        QGraphicsEllipseItem::mouseReleaseEvent(event);
-        commandManager::getInstance()->setEditingItem(false);
+        QGraphicsEllipseItem::mouseReleaseEvent(event);        
         QRectF sceneRect = this->mapToScene(this->boundingRect()).boundingRect();
         QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
         if(sceneRect.left() < selectRect.x()){
@@ -199,6 +209,19 @@ void myEllipseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
            sceneRect.right() < selectRect.right() &&
            sceneRect.bottom() < selectRect.bottom()){
            setNowRect(sceneRect);
+        }
+        commandManager::getInstance()->setEditingItem(false);
+
+        order* moveOrder = undoManager::getInstance()->popOrder();
+        myEllipseItem* moveBeforeItem = dynamic_cast<myEllipseItem*>(moveOrder->getDeleteItem().back());
+        if(moveBeforeItem->rect() == this->rect() && moveBeforeItem->pos() == this->pos()){
+            QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
+            delete deleteItem.back();
+            delete moveOrder;
+        }else{
+            moveOrder->addToAddItem(this);
+            undoManager::getInstance()->pushOrder(moveOrder);
+            redoManager::getInstance()->clear();
         }
     }
 }

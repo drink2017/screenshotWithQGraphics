@@ -184,14 +184,7 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
         }
     }
-
-    //这一部分可以简化
-    QList<QGraphicsItem*> selectedItems = screenshotView::getInstance()->getScene()->selectedItems();
-    if (!selectedItems.isEmpty()) {
-        foreach (QGraphicsItem* item, selectedItems) {
-            item->setSelected(false);
-        }
-    }
+    scene()->clearSelection();
 }
 
 void selectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
