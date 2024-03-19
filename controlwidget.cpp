@@ -291,6 +291,11 @@ void controlWidget::updateButtonStatu(){
     }else{
         pRectButton->setChecked(false);
     }
+    if(commandManager::getInstance()->isDrawingEllipse()){
+        pRoundButton->setChecked(true);
+    }else{
+        pRoundButton->setChecked(false);
+    }
 }
 
 

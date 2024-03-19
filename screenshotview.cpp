@@ -113,13 +113,10 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
     }
     if(state->isDrawingRect() && event->button() == Qt::LeftButton && !state->isEditingItem()){
         commandManager::getInstance()->drawRectEnd = event->pos();
-
         myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
         newRectItem->setPen(commandManager::getInstance()->rectPen);
         newRectItem->setNowRect(newRectItem->rect());
-
         scene->addItem(newRectItem);
-
         currentRectItem->setRect(QRectF());
 
         order* addOrder = new order();
@@ -131,12 +128,10 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
     }
     if(state->isDrawingEllipse() && event->button() == Qt::LeftButton && !state->isEditingItem()){
         commandManager::getInstance()->drawEllipseEnd = event->pos();
-
         myEllipseItem* newEllipseItem = new myEllipseItem(QRectF(selectStart,selectEnd).intersected(currentEllipseItem->rect()));
         newEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
-
+        newEllipseItem->setNowRect(newEllipseItem->rect());
         scene->addItem(newEllipseItem);
-
         currentEllipseItem->setRect(QRectF());
     }
     QGraphicsView::mouseReleaseEvent(event);

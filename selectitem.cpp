@@ -2,6 +2,7 @@
 #include "screenshotview.h"
 #include "commandmanager.h"
 #include "myrectitem.h"
+#include "myellipseitem.h"
 
 #include <QPen>
 #include <QGraphicsSceneMouseEvent>
@@ -124,6 +125,7 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     type = mousePointIn(event->pos());
     if(type != RECT_NO){
         commandManager::getInstance()->disableDrawRect();
+        commandManager::getInstance()->disableDrawEllipse();
         isChaningArea = true;
 
         QList<myRectItem*> editedRectItems;
@@ -131,6 +133,15 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             if(myRectItem* editedRectItem = dynamic_cast<myRectItem*>(item)){
                 if(editedRectItem->flags() & QGraphicsItem::ItemIsMovable){
                     editedRectItems.append(editedRectItem);
+                }
+            }
+        }
+
+        QList<myEllipseItem*> editedEllipseItems;
+        foreach(QGraphicsItem* item,this->scene()->items()){
+            if(myEllipseItem* editedEllipseItem = dynamic_cast<myEllipseItem*>(item)){
+                if(editedEllipseItem->flags() & QGraphicsItem::ItemIsMovable){
+                    editedEllipseItems.append(editedEllipseItem);
                 }
             }
         }
@@ -153,6 +164,22 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 }
                 if((editedRectItem->getNowRect().y()+editedRectItem->getNowRect().height()) > maxY){
                     maxY = editedRectItem->getNowRect().y()+editedRectItem->getNowRect().height();
+                }
+            }
+        }
+        if(!editedEllipseItems.isEmpty()){
+            foreach(myEllipseItem* editedEllipseItem,editedEllipseItems){
+                if(editedEllipseItem->getNowRect().x() < minX){
+                    minX = editedEllipseItem->getNowRect().x();
+                }
+                if(editedEllipseItem->getNowRect().y() < minY){
+                    minY = editedEllipseItem->getNowRect().y();
+                }
+                if((editedEllipseItem->getNowRect().x()+editedEllipseItem->getNowRect().width()) > maxX){
+                    maxX = editedEllipseItem->getNowRect().x()+editedEllipseItem->getNowRect().width();
+                }
+                if((editedEllipseItem->getNowRect().y()+editedEllipseItem->getNowRect().height()) > maxY){
+                    maxY = editedEllipseItem->getNowRect().y()+editedEllipseItem->getNowRect().height();
                 }
             }
         }

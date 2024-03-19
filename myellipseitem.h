@@ -19,6 +19,9 @@ public:
 
     void updateEllipseHandles();
 
+    void setNowRect(QRectF nowRect);
+    QRectF getNowRect();
+
 private:
     void createEllipseHandles();
     void showEllipseHandles();
@@ -32,7 +35,7 @@ private:
     QRectF before;
 
     //用于undo,redo
-    //QRectF nowRect;
+    QRectF nowRect;
 
     bool isMouseOnBoundary(const QPointF& pos) const;
 

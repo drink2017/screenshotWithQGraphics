@@ -1,5 +1,6 @@
 #include "myellipseitem.h"
 #include "commandmanager.h"
+#include "screenshotview.h"
 
 #include <QBrush>
 #include <QPen>
@@ -171,6 +172,34 @@ void myEllipseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(this->isSelected()){
         QGraphicsEllipseItem::mouseReleaseEvent(event);
         commandManager::getInstance()->setEditingItem(false);
+        QRectF sceneRect = this->mapToScene(this->boundingRect()).boundingRect();
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
+        if(sceneRect.left() < selectRect.x()){
+            this->setX(selectRect.x() - this->rect().x());
+            sceneRect.translate(selectRect.x() - sceneRect.x(),0);
+            setNowRect(sceneRect);
+        }
+        if(sceneRect.top() < selectRect.top()){
+            this->setY(selectRect.y() - this->rect().y());
+            sceneRect.translate(0,selectRect.y() - sceneRect.top());
+            setNowRect(sceneRect);
+        }
+        if(sceneRect.right() > selectRect.right()){
+            this->setX(selectRect.right() - this->rect().right());
+            sceneRect.translate(selectRect.right() - sceneRect.right(),0);
+            setNowRect(sceneRect);
+        }
+        if(sceneRect.bottom() > selectRect.bottom()){
+            this->setY(selectRect.bottom() - this->rect().bottom());
+            sceneRect.translate(0,selectRect.bottom() - sceneRect.bottom());
+            setNowRect(sceneRect);
+        }
+        if(sceneRect.left() > selectRect.x() &&
+           sceneRect.top() > selectRect.top() &&
+           sceneRect.right() < selectRect.right() &&
+           sceneRect.bottom() < selectRect.bottom()){
+           setNowRect(sceneRect);
+        }
     }
 }
 
@@ -194,6 +223,14 @@ pointInEllipse myEllipseItem::mousePointIn(QPointF pos){
     }else{
         return ellipse_rect_no;
     }
+}
+
+void myEllipseItem::setNowRect(QRectF nowRect){
+    this->nowRect = nowRect;
+}
+
+QRectF myEllipseItem::getNowRect(){
+    return nowRect;
 }
 
 
