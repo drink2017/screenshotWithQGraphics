@@ -29,6 +29,7 @@ SOURCES += \
     screenshotview.cpp \
     selectitem.cpp \
     settings.cpp \
+    textwidget.cpp \
     undomanager.cpp
 
 HEADERS += \
@@ -44,6 +45,7 @@ HEADERS += \
     screenshotview.h \
     selectitem.h \
     settings.h \
+    textwidget.h \
     undomanager.h
 
 # Default rules for deployment.
