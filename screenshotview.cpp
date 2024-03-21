@@ -63,13 +63,27 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
         commandManager::getInstance()->ellipsePen.setWidth(control->myColorWidget->settings->getEllipseWidth());
         currentEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
     }if(state->isDrawingArrow() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        commandManager::getInstance()->drawArrowStart = event->pos();
+        if(!QRect(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).contains(event->pos())){
+            QPoint start(event->pos());
+            QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+            if(event->pos().x() < selectRect.left()){
+                start.setX(selectRect.left());
+            }else if(event->pos().x() > selectRect.right()){
+                start.setX(selectRect.right());
+            }
+            if(event->pos().y() < selectRect.top()){
+                start.setY(selectRect.top());
+            }else if(event->pos().y() > selectRect.bottom()){
+                start.setY(selectRect.bottom());
+            }
+            commandManager::getInstance()->drawArrowStart = start;
+        }else{
+            commandManager::getInstance()->drawArrowStart = event->pos();
+        }
         commandManager::getInstance()->drawArrowEnd = event->pos();
         commandManager::getInstance()->arrowPen.setColor(control->myColorWidget->settings->getArrowColor());
         commandManager::getInstance()->arrowPen.setWidth(control->myColorWidget->settings->getArrowWidth());
         currentArrowItem->setPen(commandManager::getInstance()->arrowPen);
-        currentArrowItem->setStart(commandManager::getInstance()->drawArrowStart);
-        currentArrowItem->setEnd(commandManager::getInstance()->drawArrowEnd);
     }
     QGraphicsView::mousePressEvent(event);
 }
@@ -91,6 +105,7 @@ void screenshotView::mouseMoveEvent(QMouseEvent *event)
         currentEllipseItem->setRect(QRectF(commandManager::getInstance()->drawEllipseStart,event->pos()).normalized());
     }
     if(state->isDrawingArrow() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
+        currentArrowItem->setStart(commandManager::getInstance()->drawArrowStart);
         currentArrowItem->setEnd(event->pos());
     }
     QGraphicsView::mouseMoveEvent(event);
@@ -109,6 +124,9 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
     }
     if(state->isDrawingRect() && event->button() == Qt::LeftButton && !state->isEditingItem()){
         commandManager::getInstance()->drawRectEnd = event->pos();
+        if(event->pos() == commandManager::getInstance()->drawRectStart){
+            return;
+        }
         myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
         newRectItem->setPen(commandManager::getInstance()->rectPen);
         newRectItem->setNowRect(newRectItem->rect());
@@ -122,8 +140,11 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         myUndoManager->pushOrder(addOrder);
         myRedoManager->clear();
     }
-    if(state->isDrawingEllipse() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+    if(state->isDrawingEllipse() && event->button() == Qt::LeftButton && !state->isEditingItem()){   
         commandManager::getInstance()->drawEllipseEnd = event->pos();
+        if(event->pos() == commandManager::getInstance()->drawEllipseStart){
+            return;
+        }
         myEllipseItem* newEllipseItem = new myEllipseItem(QRectF(selectStart,selectEnd).intersected(currentEllipseItem->rect()));
         newEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
         newEllipseItem->setNowRect(newEllipseItem->rect());
@@ -138,7 +159,22 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         myRedoManager->clear();
     }
     if(state->isDrawingArrow() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        commandManager::getInstance()->drawArrowEnd = event->pos();
+        QPoint end = event->pos();
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+        if(event->pos().x() < selectRect.left()){
+            end.setX(selectRect.left());
+        }else if(event->pos().x() > selectRect.right()){
+            end.setX(selectRect.right());
+        }
+        if(event->pos().y() < selectRect.top()){
+            end.setY(selectRect.top());
+        }else if(event->pos().y() > selectRect.bottom()){
+            end.setY(selectRect.bottom());
+        }
+        if(end == commandManager::getInstance()->drawArrowStart){
+            return;
+        }
+        commandManager::getInstance()->drawArrowEnd = end;
         myArrowItem* newArrowItem = new myArrowItem(commandManager::getInstance()->drawArrowStart,commandManager::getInstance()->drawArrowEnd);
         newArrowItem->setPen(commandManager::getInstance()->arrowPen);
         scene->addItem(newArrowItem);

@@ -126,6 +126,7 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if(type != RECT_NO){
         commandManager::getInstance()->disableDrawRect();
         commandManager::getInstance()->disableDrawEllipse();
+        commandManager::getInstance()->disableDrawArrow();
         isChaningArea = true;
 
         QList<myRectItem*> editedRectItems;

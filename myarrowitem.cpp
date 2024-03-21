@@ -24,16 +24,26 @@ void myArrowItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    arrowPen.setCapStyle(Qt::RoundCap);
     painter->setPen(arrowPen);
+
     painter->drawLine(start_pos,end_pos);
 
-    // 绘制箭头头部
-    QPointF arrowHead[3];
-    qreal angle = std::atan2((end_pos.y() - start_pos.y()), (end_pos.x() - start_pos.x()));
-    arrowHead[0] = end_pos;
-    arrowHead[1] = end_pos - QPointF(sin(angle + M_PI / 3) * 10, cos(angle + M_PI / 3) * 10);
-    arrowHead[2] = end_pos - QPointF(sin(angle + M_PI - M_PI / 3) * 10, cos(angle + M_PI - M_PI / 3) * 10);
-    painter->drawPolygon(arrowHead, 3);
+    int size = painter->pen().width() * 10;
+
+    double angle = std::atan2(-1.0 * (end_pos.y() - start_pos.y()), end_pos.x() - start_pos.x());
+    QPoint arrowP1 = end_pos.toPoint() + QPoint(-1 * size * std::cos(angle - M_PI / 6), size * std::sin(angle - M_PI / 6));
+    QPoint arrowP2 = end_pos.toPoint() + QPoint(-1 * size * std::cos(angle + M_PI / 6), size * std::sin(angle + M_PI / 6));
+
+    // 画箭头尖端
+    QPainterPath path;
+    path.moveTo(end_pos);
+    path.lineTo(arrowP1);
+    path.lineTo(arrowP2);
+    path.closeSubpath();
+
+    // 填充箭头尖端
+    painter->fillPath(path, painter->pen().color());
 }
 
 QPainterPath myArrowItem::shape() const
