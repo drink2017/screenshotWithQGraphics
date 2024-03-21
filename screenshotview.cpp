@@ -85,27 +85,9 @@ void screenshotView::mouseMoveEvent(QMouseEvent *event)
         info->updateInfoLabel();
     }
     if(state->isDrawingRect() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
-        //if(event->pos().x() < commandManager::getInstance()->drawRectStart.x() && event->pos().y() < commandManager::getInstance()->drawRectStart.y()){
-        //    currentRectItem->setRect(QRect(event->pos(),commandManager::getInstance()->drawRectStart));
-        //}else if(event->pos().x() < commandManager::getInstance()->drawRectStart.x()){
-        //    currentRectItem->setRect(QRect(QPoint(event->pos().x(),commandManager::getInstance()->drawRectStart.y()),QPoint(commandManager::getInstance()->drawRectStart.x(),event->pos().y())));
-        //}else if(event->pos().y() < commandManager::getInstance()->drawRectStart.y()){
-        //    currentRectItem->setRect(QRect(QPoint(commandManager::getInstance()->drawRectStart.x(),event->pos().y()),QPoint(event->pos().x(),commandManager::getInstance()->drawRectStart.y())));
-        //}else{
-        //    currentRectItem->setRect(QRect(commandManager::getInstance()->drawRectStart,event->pos()));
-        //}
         currentRectItem->setRect(QRectF(commandManager::getInstance()->drawRectStart,event->pos()).normalized());
     }
     if(state->isDrawingEllipse() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
-        //if(event->pos().x() < commandManager::getInstance()->drawEllipseStart.x() && event->pos().y() < commandManager::getInstance()->drawEllipseStart.y()){
-        //    currentEllipseItem->setRect(QRect(event->pos(),commandManager::getInstance()->drawEllipseStart));
-        //}else if(event->pos().x() < commandManager::getInstance()->drawEllipseStart.x()){
-        //    currentEllipseItem->setRect(QRect(QPoint(event->pos().x(),commandManager::getInstance()->drawEllipseStart.y()),QPoint(commandManager::getInstance()->drawEllipseStart.x(),event->pos().y())));
-        //}else if(event->pos().y() <commandManager::getInstance()->drawEllipseStart.x()){
-        //    currentEllipseItem->setRect(QRect(QPoint(commandManager::getInstance()->drawEllipseStart.x(),event->pos().y()),QPoint(event->pos().x(),commandManager::getInstance()->drawEllipseStart.y())));
-        //}else{
-        //    currentEllipseItem->setRect(QRect(commandManager::getInstance()->drawEllipseStart,event->pos()));
-        //}
         currentEllipseItem->setRect(QRectF(commandManager::getInstance()->drawEllipseStart,event->pos()).normalized());
     }
     if(state->isDrawingArrow() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){

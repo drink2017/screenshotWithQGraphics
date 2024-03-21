@@ -103,6 +103,8 @@ void colorWidget::setButtons(){
 }
 
 void colorWidget::setInitialButton(){
+    //qDebug() << type;
+    //qDebug() << settings->getRectWidth();
     switch(type){
     case widgetType::rect:
         switch (settings->getRectWidth()) {
@@ -122,6 +124,7 @@ void colorWidget::setInitialButton(){
             cuButton->setChecked(true);
             break;
         }
+        break;
     case widgetType::ellipse:
         switch (settings->getEllipseWidth()) {
         case 2:
@@ -140,8 +143,9 @@ void colorWidget::setInitialButton(){
             cuButton->setChecked(true);
             break;
         }
+        break;
     case widgetType::arrow:
-        switch (settings->getPenWidth()) {
+        switch (settings->getArrowWidth()) {
         case 2:
             xiButton->setChecked(true);
             zhongButton->setChecked(false);
@@ -158,6 +162,7 @@ void colorWidget::setInitialButton(){
             cuButton->setChecked(true);
             break;
         }
+        break;
     default:
         break;
     }
