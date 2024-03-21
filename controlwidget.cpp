@@ -105,12 +105,16 @@ void controlWidget::setButtons(){
     pArrowButton = new QPushButton(this);
     pArrowButton->setFixedSize(QSize(32,32));
     pArrowButton->setToolTip("箭头");
+    pArrowButton->setCheckable(true);
+    pArrowButton->setChecked(false);
     QIcon arrowIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\right-arrow.png");
     pArrowButton->setIcon(arrowIcon);
 
     pPenButton = new QPushButton(this);
     pPenButton->setFixedSize(QSize(32,32));
     pPenButton->setToolTip("画笔");
+    pPenButton->setCheckable(true);
+    pPenButton->setChecked(false);
     QIcon penIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\pen.png");
     pPenButton->setIcon(penIcon);
 
@@ -167,6 +171,7 @@ void controlWidget::addButtonsToLayout(){
 void controlWidget::connectToSlots(){
     connect(pRectButton,&QPushButton::clicked,this,&controlWidget::rectButtonStatu);
     connect(pRoundButton,&QPushButton::clicked,this,&controlWidget::roundButtonStatu);
+    connect(pArrowButton,&QPushButton::clicked,this,&controlWidget::arrowButtonStatu);
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
     connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
@@ -174,9 +179,11 @@ void controlWidget::connectToSlots(){
 
 void controlWidget::rectButtonStatu(){
     pRoundButton->setChecked(false);
+    pArrowButton->setChecked(false);
     if(pRectButton->isChecked()){
         emit enableDrawRect();
         emit disableDrawRound();
+        emit disableDrawArrow();
         myColorWidget->setType(widgetType::rect);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
@@ -192,10 +199,32 @@ void controlWidget::rectButtonStatu(){
 
 void controlWidget::roundButtonStatu(){
     pRectButton->setChecked(false);
+    pArrowButton->setChecked(false);
     if(pRoundButton->isChecked()){
         emit enableDrawRound();
         emit disableDrawRect();
+        emit disableDrawArrow();
         myColorWidget->setType(widgetType::ellipse);
+        myColorWidget->show();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }else{
+        myColorWidget->hide();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }
+}
+
+void controlWidget::arrowButtonStatu(){
+    pRectButton->setChecked(false);
+    pRoundButton->setChecked(false);
+    if(pArrowButton->isChecked()){
+        emit enableDrawArrow();
+        emit disableDrawRect();
+        emit disableDrawRound();
+        myColorWidget->setType(widgetType::arrow);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
         QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
@@ -231,11 +260,7 @@ void controlWidget::undo(){
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-
-                //
                 afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
-                //
-
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
@@ -251,11 +276,7 @@ void controlWidget::undo(){
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-
-                //
                 afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
-                //
-
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
@@ -293,11 +314,7 @@ void controlWidget::redo(){
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-
-                //
                 afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
-                //
-
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
@@ -313,11 +330,7 @@ void controlWidget::redo(){
                 QRectF afterMOveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-
-                //
                 afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
-                //
-
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMOveRect);

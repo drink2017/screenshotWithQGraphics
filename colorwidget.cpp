@@ -140,6 +140,24 @@ void colorWidget::setInitialButton(){
             cuButton->setChecked(true);
             break;
         }
+    case widgetType::arrow:
+        switch (settings->getPenWidth()) {
+        case 2:
+            xiButton->setChecked(true);
+            zhongButton->setChecked(false);
+            cuButton->setChecked(false);
+            break;
+        case 4:
+            xiButton->setChecked(false);
+            zhongButton->setChecked(true);
+            cuButton->setChecked(false);
+            break;
+        case 6:
+            xiButton->setChecked(false);
+            zhongButton->setChecked(false);
+            cuButton->setChecked(true);
+            break;
+        }
     default:
         break;
     }
@@ -256,6 +274,9 @@ void colorWidget::slotOnXiButton(){
         case widgetType::ellipse:
             settings->setEllipseWidth(2);
             break;
+        case widgetType::arrow:
+            settings->setArrowWidth(2);
+            break;
         default:
             break;
         }
@@ -275,6 +296,9 @@ void colorWidget::slotOnZhongButton(){
         case widgetType::ellipse:
             settings->setEllipseWidth(4);
             break;
+        case widgetType::arrow:
+            settings->setArrowWidth(4);
+            break;
         default:
             break;
         }
@@ -293,6 +317,9 @@ void colorWidget::slotOnCuButton(){
             break;
         case widgetType::ellipse:
             settings->setEllipseWidth(6);
+            break;
+        case widgetType::arrow:
+            settings->setArrowWidth(6);
             break;
         default:
             break;
@@ -314,6 +341,7 @@ void colorWidget::slotOnBlackButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::black);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -338,6 +366,7 @@ void colorWidget::slotOnDarkGrayButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::darkGray);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -362,6 +391,7 @@ void colorWidget::slotOnDarkRedButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::darkRed);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -386,6 +416,7 @@ void colorWidget::slotOnOrangeButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(QColor(255,165,0));
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -410,6 +441,7 @@ void colorWidget::slotOnDarkGreenButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::darkGreen);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -434,6 +466,7 @@ void colorWidget::slotOnDarkBlueButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::darkBlue);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -458,6 +491,7 @@ void colorWidget::slotOnDarkMagentaButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::darkMagenta);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -482,6 +516,7 @@ void colorWidget::slotOnDarkCyanButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::darkCyan);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -506,6 +541,7 @@ void colorWidget::slotOnWhiteButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::white);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -530,6 +566,7 @@ void colorWidget::slotOnLightGrayButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::lightGray);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -554,6 +591,7 @@ void colorWidget::slotOnRedButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::red);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -578,6 +616,7 @@ void colorWidget::slotOnYellowButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::yellow);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -602,6 +641,7 @@ void colorWidget::slotOnGreenButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::green);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -626,6 +666,7 @@ void colorWidget::slotOnBlueButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::blue);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -650,6 +691,7 @@ void colorWidget::slotOnMagentaButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::magenta);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
@@ -674,6 +716,7 @@ void colorWidget::slotOnCyanButton(){
         color = settings->getEllipseColor().name();
         break;
     case widgetType::arrow:
+        settings->setArrowColor(Qt::cyan);
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:

@@ -126,122 +126,42 @@ void myRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     if(type == rect_top_left){
         setCursor(Qt::SizeFDiagCursor);
-        QRectF now;
-        if(event->pos().x() < before.bottomRight().x() && event->pos().y() < before.bottomRight().y()){
-            now.setTopLeft(event->pos());
-            now.setBottomRight(before.bottomRight());
-        }else if(event->pos().x() < before.bottomRight().x()){
-            now.setTopRight(before.bottomRight());
-            now.setBottomLeft(event->pos());
-        }else if(event->pos().y() < before.bottomRight().y()){
-            now.setBottomLeft(before.bottomRight());
-            now.setTopRight(event->pos());
-        }else{
-            now.setTopLeft(before.bottomRight());
-            now.setBottomRight(event->pos());
-        }
+        QRectF now = QRectF(event->pos(),before.bottomRight()).normalized();
         this->setRect(now);
         updateEllipseHandles();
     }else if(type == rect_top){
         setCursor(Qt::SizeVerCursor);
-        QRectF now;
-        if(event->pos().y() < before.bottom()){
-            now.setBottomLeft(before.bottomLeft());
-            now.setTopRight(QPoint(before.right(),event->pos().y()));
-        }else{
-            now.setTopLeft(before.bottomLeft());
-            now.setBottomRight(QPoint(before.right(),event->pos().y()));
-        }
+        QRectF now = QRectF(QPointF(before.left(),event->pos().y()),before.bottomRight()).normalized();
         setRect(now);
         updateEllipseHandles();
     }else if(type == rect_top_right){
         setCursor(Qt::SizeBDiagCursor);
-        QRectF now;
-        if(event->pos().x() < before.bottomLeft().x() && event->pos().y() < before.bottomLeft().y()){
-            now.setTopLeft(event->pos());
-            now.setBottomRight(before.bottomLeft());
-        }else if(event->pos().x() < before.bottomLeft().x()){
-            now.setBottomLeft(event->pos());
-            now.setTopRight(before.bottomLeft());
-        }else if(event->pos().y() < before.bottomLeft().y()){
-            now.setBottomLeft(before.bottomLeft());
-            now.setTopRight(event->pos());
-        }else{
-            now.setTopLeft(before.bottomLeft());
-            now.setBottomRight(event->pos());
-        }
+        QRectF now = QRectF(event->pos(),before.bottomLeft()).normalized();
         setRect(now);
         updateEllipseHandles();
     }else if(type == rect_right){
         setCursor(Qt::SizeHorCursor);
-        QRectF now;
-        if(event->pos().x() < before.left()){
-            now.setTopLeft(QPoint(event->pos().x(),before.top()));
-            now.setBottomRight(before.bottomLeft());
-        }else{
-            now.setTopLeft(before.topLeft());
-            now.setBottomRight(QPoint(event->pos().x(),before.bottom()));
-        }
+        QRectF now = QRectF(before.topLeft(),QPointF(event->pos().x(),before.bottom())).normalized();
         setRect(now);
         updateEllipseHandles();
     }else if(type == rect_bottom_right){
         setCursor(Qt::SizeFDiagCursor);
-        QRectF now;
-        if(event->pos().x() < before.topLeft().x() && event->pos().y() < before.topLeft().y()){
-            now.setTopLeft(event->pos());
-            now.setBottomRight(before.topLeft());
-        }else if(event->pos().x() < before.topLeft().x()){
-            now.setBottomLeft(event->pos());
-            now.setTopRight(before.topLeft());
-        }else if(event->pos().y() < before.topRight().y()){
-            now.setBottomLeft(before.topLeft());
-            now.setTopRight(event->pos());
-        }else{
-            now.setTopLeft(before.topLeft());
-            now.setBottomRight(event->pos());
-        }
+        QRectF now = QRectF(before.topLeft(),event->pos()).normalized();
         setRect(now);
         updateEllipseHandles();
     }else if(type == rect_bottom){
         setCursor(Qt::SizeVerCursor);
-        QRectF now;
-        if(event->pos().y() < before.top()){
-            now.setTopLeft(QPoint(before.left(),event->pos().y()));
-            now.setBottomRight(before.topRight());
-        }else{
-            now.setTopLeft(before.topLeft());
-            now.setBottomRight(QPoint(before.right(),event->pos().y()));
-        }
+        QRectF now = QRectF(before.topLeft(),QPointF(before.right(),event->pos().y())).normalized();
         setRect(now);
         updateEllipseHandles();
     }else if(type == rect_bottom_left){
         setCursor(Qt::SizeBDiagCursor);
-        QRectF now;
-        if(event->pos().x() < before.topRight().x() && event->pos().y() < before.topRight().y()){
-            now.setTopLeft(event->pos());
-            now.setBottomRight(before.topRight());
-        }else if(event->pos().x() < before.topRight().x()){
-            now.setBottomLeft(event->pos());
-            now.setTopRight(before.topRight());
-        }else if(event->pos().y() < before.topRight().y()){
-            now.setBottomLeft(before.topRight());
-            now.setTopRight(event->pos());
-        }else{
-            now.setTopLeft(before.topRight());
-            now.setBottomRight(event->pos());
-        }
+        QRectF now = QRectF(event->pos(),before.topRight()).normalized();
         setRect(now);
         updateEllipseHandles();
     }else if(type == rect_left){
         setCursor(Qt::SizeHorCursor);
-        QRectF now;
-        if(event->pos().x() < before.right()){
-            now.setTopLeft(QPoint(event->pos().x(),before.top()));
-            now.setBottomRight(before.bottomRight());
-        }else{
-            now.setTopLeft(before.topRight());
-            now.setBottomRight(QPoint(event->pos().x(),before.bottom()));
-        }
+        QRectF now = QRectF(QPointF(event->pos().x(),before.top()),before.bottomRight()).normalized();
         setRect(now);
         updateEllipseHandles();
     }

@@ -51,6 +51,7 @@ private:
 public slots:
     void rectButtonStatu();
     void roundButtonStatu();
+    void arrowButtonStatu();
     void undo();
     void redo();
 
@@ -59,6 +60,8 @@ signals:
     void disableDrawRect();
     void enableDrawRound();
     void disableDrawRound();
+    void enableDrawArrow();
+    void disableDrawArrow();
     void quit();
 };
 

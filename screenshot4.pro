@@ -22,6 +22,7 @@ SOURCES += \
     controlwidget.cpp \
     infolabel.cpp \
     main.cpp \
+    myarrowitem.cpp \
     myellipseitem.cpp \
     myrectitem.cpp \
     order.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     commandmanager.h \
     controlwidget.h \
     infolabel.h \
+    myarrowitem.h \
     myellipseitem.h \
     myrectitem.h \
     order.h \

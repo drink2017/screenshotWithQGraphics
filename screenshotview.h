@@ -4,6 +4,7 @@
 #include "selectitem.h"
 #include "infolabel.h"
 #include "controlwidget.h"
+#include "myarrowitem.h"
 
 #include <QGraphicsView>
 
@@ -46,6 +47,7 @@ private:
     //要画的图元
     QGraphicsRectItem* currentRectItem = new QGraphicsRectItem(QRectF());
     QGraphicsEllipseItem* currentEllipseItem = new QGraphicsEllipseItem(QRectF());
+    myArrowItem* currentArrowItem = new myArrowItem(QPointF(),QPointF());
 
     // QWidget interface
 protected:
