@@ -106,7 +106,21 @@ void screenshotView::mouseMoveEvent(QMouseEvent *event)
     }
     if(state->isDrawingArrow() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
         currentArrowItem->setStart(commandManager::getInstance()->drawArrowStart);
-        currentArrowItem->setEnd(event->pos());
+
+        QPoint end = event->pos();
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+        if(event->pos().x() < selectRect.left()){
+            end.setX(selectRect.left());
+        }else if(event->pos().x() > selectRect.right()){
+            end.setX(selectRect.right());
+        }
+        if(event->pos().y() < selectRect.top()){
+            end.setY(selectRect.top());
+        }else if(event->pos().y() > selectRect.bottom()){
+            end.setY(selectRect.bottom());
+        }
+
+        currentArrowItem->setEnd(end);
     }
     QGraphicsView::mouseMoveEvent(event);
 }
