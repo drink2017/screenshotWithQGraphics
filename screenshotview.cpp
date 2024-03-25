@@ -28,6 +28,7 @@ screenshotView::screenshotView()
     scene->addItem(currentRectItem);
     scene->addItem(currentEllipseItem);
     scene->addItem(currentArrowItem);
+    currentArrowItem->setFlag(QGraphicsItem::ItemIsMovable,false);
 }
 
 screenshotView* screenshotView::getInstance(){

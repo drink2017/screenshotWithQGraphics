@@ -3,6 +3,7 @@
 #include "commandmanager.h"
 #include "myrectitem.h"
 #include "myellipseitem.h"
+#include "myarrowitem.h"
 
 #include <QPen>
 #include <QGraphicsSceneMouseEvent>
@@ -147,6 +148,15 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
         }
 
+        QList<myArrowItem*> editedArrowItems;
+        foreach(QGraphicsItem* item,this->scene()->items()){
+            if(myArrowItem* editedArrowItem = dynamic_cast<myArrowItem*>(item)){
+                if(editedArrowItem->flags() & QGraphicsItem::ItemIsMovable){
+                    editedArrowItems.append(editedArrowItem);
+                }
+            }
+        }
+
         minX = 10000;
         minY = 10000;
         maxX = 0;
@@ -181,6 +191,23 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 }
                 if((editedEllipseItem->getNowRect().y()+editedEllipseItem->getNowRect().height()) > maxY){
                     maxY = editedEllipseItem->getNowRect().y()+editedEllipseItem->getNowRect().height();
+                }
+            }
+        }
+        if(!editedArrowItems.isEmpty()){
+            foreach(myArrowItem* editedArrowItem,editedArrowItems){
+                QRectF sceneRect = editedArrowItem->mapToScene(editedArrowItem->boundingRect()).boundingRect();
+                if(sceneRect.x() < minX){
+                    minX = sceneRect.x();
+                }
+                if(sceneRect.y() < minY){
+                    minY = sceneRect.y();
+                }
+                if((sceneRect.x()+sceneRect.width()) > maxX){
+                    maxX = sceneRect.x()+sceneRect.width();
+                }
+                if((sceneRect.y()+sceneRect.height()) > maxY){
+                    maxY = sceneRect.y()+sceneRect.height();
                 }
             }
         }

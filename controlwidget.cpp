@@ -360,6 +360,11 @@ void controlWidget::updateButtonStatu(){
     }else{
         pRoundButton->setChecked(false);
     }
+    if(commandManager::getInstance()->isDrawingArrow()){
+        pArrowButton->setChecked(true);
+    }else{
+        pArrowButton->setChecked(false);
+    }
 }
 
 

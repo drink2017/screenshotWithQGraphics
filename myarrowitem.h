@@ -37,8 +37,6 @@ private:
     pointInArrow type;
     pointInArrow mousePointIn(QPointF pos);
 
-    //QPointF pressPos;
-
     // QGraphicsItem interface
 public:
     QRectF boundingRect() const override;
