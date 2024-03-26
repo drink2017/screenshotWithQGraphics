@@ -172,6 +172,7 @@ void controlWidget::connectToSlots(){
     connect(pRectButton,&QPushButton::clicked,this,&controlWidget::rectButtonStatu);
     connect(pRoundButton,&QPushButton::clicked,this,&controlWidget::roundButtonStatu);
     connect(pArrowButton,&QPushButton::clicked,this,&controlWidget::arrowButtonStatu);
+    connect(pPenButton,&QPushButton::clicked,this,&controlWidget::penButtonStatu);
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
     connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
@@ -180,10 +181,12 @@ void controlWidget::connectToSlots(){
 void controlWidget::rectButtonStatu(){
     pRoundButton->setChecked(false);
     pArrowButton->setChecked(false);
+    pPenButton->setChecked(false);
     if(pRectButton->isChecked()){
         emit enableDrawRect();
         emit disableDrawRound();
         emit disableDrawArrow();
+        emit disableDrawPen();
         myColorWidget->setType(widgetType::rect);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
@@ -200,10 +203,12 @@ void controlWidget::rectButtonStatu(){
 void controlWidget::roundButtonStatu(){
     pRectButton->setChecked(false);
     pArrowButton->setChecked(false);
+    pPenButton->setChecked(false);
     if(pRoundButton->isChecked()){
         emit enableDrawRound();
         emit disableDrawRect();
         emit disableDrawArrow();
+        emit disableDrawPen();
         myColorWidget->setType(widgetType::ellipse);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
@@ -220,11 +225,35 @@ void controlWidget::roundButtonStatu(){
 void controlWidget::arrowButtonStatu(){
     pRectButton->setChecked(false);
     pRoundButton->setChecked(false);
+    pPenButton->setChecked(false);
     if(pArrowButton->isChecked()){
         emit enableDrawArrow();
         emit disableDrawRect();
         emit disableDrawRound();
+        emit disableDrawPen();
         myColorWidget->setType(widgetType::arrow);
+        myColorWidget->show();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }else{
+        myColorWidget->hide();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }
+}
+
+void controlWidget::penButtonStatu(){
+    pRectButton->setChecked(false);
+    pRoundButton->setChecked(false);
+    pArrowButton->setChecked(false);
+    if(pPenButton->isChecked()){
+        emit enableDrawPen();
+        emit disableDrawRect();
+        emit disableDrawRound();
+        emit disableDrawArrow();
+        myColorWidget->setType(widgetType::pen);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
         QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
@@ -294,8 +323,6 @@ void controlWidget::undo(){
                 afterMoveItem->setStart((afterMoveItem->mapFromScene((beforeMoveItem->mapToScene(beforeMoveItem->getStart())))).toPoint());
                 afterMoveItem->setEnd((afterMoveItem->mapFromScene(beforeMoveItem->mapToScene(beforeMoveItem->getEnd()))).toPoint());
                 afterMoveItem->updateEllipseHandles();
-                //beforeMoveItem->setStart(afterMoveStart.toPoint());
-                //beforeMoveItem->setEnd(afterMoveEnd.toPoint());
                 beforeMoveItem->setStart((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveStart))).toPoint());
                 beforeMoveItem->setEnd((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveEnd))).toPoint());
                 undoOrder->clearAddItem();
@@ -365,8 +392,6 @@ void controlWidget::redo(){
                 afterMoveItem->setStart((afterMoveItem->mapFromScene((beforeMoveItem->mapToScene(beforeMoveItem->getStart())))).toPoint());
                 afterMoveItem->setEnd((afterMoveItem->mapFromScene(beforeMoveItem->mapToScene(beforeMoveItem->getEnd()))).toPoint());
                 afterMoveItem->updateEllipseHandles();
-                //beforeMoveItem->setStart(afterMoveStart.toPoint());
-                //beforeMoveItem->setEnd(afterMoveEnd.toPoint());
                 beforeMoveItem->setStart((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveStart))).toPoint());
                 beforeMoveItem->setEnd((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveEnd))).toPoint());
                 redoOrder->clearAddItem();

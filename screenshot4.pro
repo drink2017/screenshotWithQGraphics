@@ -24,6 +24,7 @@ SOURCES += \
     main.cpp \
     myarrowitem.cpp \
     myellipseitem.cpp \
+    mypenitem.cpp \
     myrectitem.cpp \
     order.cpp \
     redomanager.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     infolabel.h \
     myarrowitem.h \
     myellipseitem.h \
+    mypenitem.h \
     myrectitem.h \
     order.h \
     redomanager.h \

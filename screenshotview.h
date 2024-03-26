@@ -48,6 +48,7 @@ private:
     QGraphicsRectItem* currentRectItem = new QGraphicsRectItem(QRectF());
     QGraphicsEllipseItem* currentEllipseItem = new QGraphicsEllipseItem(QRectF());
     myArrowItem* currentArrowItem = new myArrowItem(QPointF(),QPointF());
+    QGraphicsPathItem* currentPenItem = new QGraphicsPathItem();
 
     // QWidget interface
 protected:

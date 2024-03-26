@@ -103,8 +103,6 @@ void colorWidget::setButtons(){
 }
 
 void colorWidget::setInitialButton(){
-    //qDebug() << type;
-    //qDebug() << settings->getRectWidth();
     switch(type){
     case widgetType::rect:
         switch (settings->getRectWidth()) {
@@ -146,6 +144,25 @@ void colorWidget::setInitialButton(){
         break;
     case widgetType::arrow:
         switch (settings->getArrowWidth()) {
+        case 2:
+            xiButton->setChecked(true);
+            zhongButton->setChecked(false);
+            cuButton->setChecked(false);
+            break;
+        case 4:
+            xiButton->setChecked(false);
+            zhongButton->setChecked(true);
+            cuButton->setChecked(false);
+            break;
+        case 6:
+            xiButton->setChecked(false);
+            zhongButton->setChecked(false);
+            cuButton->setChecked(true);
+            break;
+        }
+        break;
+    case widgetType::pen:
+        switch (settings->getPenWidth()) {
         case 2:
             xiButton->setChecked(true);
             zhongButton->setChecked(false);
@@ -282,6 +299,9 @@ void colorWidget::slotOnXiButton(){
         case widgetType::arrow:
             settings->setArrowWidth(2);
             break;
+        case widgetType::pen:
+            settings->setPenWidth(2);
+            break;
         default:
             break;
         }
@@ -304,6 +324,9 @@ void colorWidget::slotOnZhongButton(){
         case widgetType::arrow:
             settings->setArrowWidth(4);
             break;
+        case widgetType::pen:
+            settings->setPenWidth(4);
+            break;
         default:
             break;
         }
@@ -325,6 +348,9 @@ void colorWidget::slotOnCuButton(){
             break;
         case widgetType::arrow:
             settings->setArrowWidth(6);
+            break;
+        case widgetType::pen:
+            settings->setPenWidth(6);
             break;
         default:
             break;
@@ -350,6 +376,7 @@ void colorWidget::slotOnBlackButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::black);
         color = settings->getPenColor().name();
         break;
     default:
@@ -375,6 +402,7 @@ void colorWidget::slotOnDarkGrayButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::darkGray);
         color = settings->getPenColor().name();
         break;
     default:
@@ -400,6 +428,7 @@ void colorWidget::slotOnDarkRedButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::darkRed);
         color = settings->getPenColor().name();
         break;
     default:
@@ -425,6 +454,7 @@ void colorWidget::slotOnOrangeButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(QColor(255,165,0));
         color = settings->getPenColor().name();
         break;
     default:
@@ -450,6 +480,7 @@ void colorWidget::slotOnDarkGreenButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::darkGreen);
         color = settings->getPenColor().name();
         break;
     default:
@@ -475,6 +506,7 @@ void colorWidget::slotOnDarkBlueButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::darkBlue);
         color = settings->getPenColor().name();
         break;
     default:
@@ -500,6 +532,7 @@ void colorWidget::slotOnDarkMagentaButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::darkMagenta);
         color = settings->getPenColor().name();
         break;
     default:
@@ -525,6 +558,7 @@ void colorWidget::slotOnDarkCyanButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::darkCyan);
         color = settings->getPenColor().name();
         break;
     default:
@@ -550,6 +584,7 @@ void colorWidget::slotOnWhiteButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::white);
         color = settings->getPenColor().name();
         break;
     default:
@@ -575,6 +610,7 @@ void colorWidget::slotOnLightGrayButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::lightGray);
         color = settings->getPenColor().name();
         break;
     default:
@@ -600,6 +636,7 @@ void colorWidget::slotOnRedButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::red);
         color = settings->getPenColor().name();
         break;
     default:
@@ -625,6 +662,7 @@ void colorWidget::slotOnYellowButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::yellow);
         color = settings->getPenColor().name();
         break;
     default:
@@ -650,6 +688,7 @@ void colorWidget::slotOnGreenButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::green);
         color = settings->getPenColor().name();
         break;
     default:
@@ -675,6 +714,7 @@ void colorWidget::slotOnBlueButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::blue);
         color = settings->getPenColor().name();
         break;
     default:
@@ -700,6 +740,7 @@ void colorWidget::slotOnMagentaButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::magenta);
         color = settings->getPenColor().name();
         break;
     default:
@@ -725,6 +766,7 @@ void colorWidget::slotOnCyanButton(){
         color = settings->getArrowColor().name();
         break;
     case widgetType::pen:
+        settings->setPenColor(Qt::cyan);
         color = settings->getPenColor().name();
         break;
     default:

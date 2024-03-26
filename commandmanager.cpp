@@ -49,6 +49,14 @@ void commandManager::setDrawingArrow(bool drawingArrow){
     this->drawingArrow = drawingArrow;
 }
 
+bool commandManager::isDrawingPen(){
+    return drawingPen;
+}
+
+void commandManager::setDrawingPen(bool drawingPen){
+    this->drawingPen = drawingPen;
+}
+
 bool commandManager::isEditingItem(){
     return editingItem;
 }
@@ -64,6 +72,8 @@ void commandManager::connectToControlWidget(){
     connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawRound,this,&commandManager::disableDrawEllipse);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawArrow,this,&commandManager::enableDrawArrow);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawArrow,this,&commandManager::disableDrawArrow);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawPen,this,&commandManager::enableDrawPen);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawPen,this,&commandManager::disableDrawPen);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::quit,this,&commandManager::quit);
 }
 
@@ -89,6 +99,14 @@ void commandManager::enableDrawArrow(){
 
 void commandManager::disableDrawArrow(){
     drawingArrow = false;
+}
+
+void commandManager::enableDrawPen(){
+    drawingPen = true;
+}
+
+void commandManager::disableDrawPen(){
+    drawingPen = false;
 }
 
 void commandManager::quit(){

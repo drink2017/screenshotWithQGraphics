@@ -5,6 +5,7 @@
 #include "redomanager.h"
 #include "myrectitem.h"
 #include "myellipseitem.h"
+#include "mypenitem.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -29,6 +30,7 @@ screenshotView::screenshotView()
     scene->addItem(currentEllipseItem);
     scene->addItem(currentArrowItem);
     currentArrowItem->setFlag(QGraphicsItem::ItemIsMovable,false);
+    scene->addItem(currentPenItem);
 }
 
 screenshotView* screenshotView::getInstance(){
@@ -63,7 +65,8 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
         commandManager::getInstance()->ellipsePen.setColor(control->myColorWidget->settings->getEllipseColor());
         commandManager::getInstance()->ellipsePen.setWidth(control->myColorWidget->settings->getEllipseWidth());
         currentEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
-    }if(state->isDrawingArrow() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+    }
+    if(state->isDrawingArrow() && event->button() == Qt::LeftButton && !state->isEditingItem()){
         if(!QRect(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).contains(event->pos())){
             QPoint start(event->pos());
             QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
@@ -85,6 +88,14 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
         commandManager::getInstance()->arrowPen.setColor(control->myColorWidget->settings->getArrowColor());
         commandManager::getInstance()->arrowPen.setWidth(control->myColorWidget->settings->getArrowWidth());
         currentArrowItem->setPen(commandManager::getInstance()->arrowPen);
+    }
+    if(state->isDrawingPen() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+        QPainterPath path = currentPenItem->path();
+        path.moveTo(event->pos());
+        currentPenItem->setPath(path);
+        commandManager::getInstance()->penPen.setColor(control->myColorWidget->settings->getPenColor());
+        commandManager::getInstance()->penPen.setWidth(control->myColorWidget->settings->getPenWidth());
+        currentPenItem->setPen(commandManager::getInstance()->penPen);
     }
     QGraphicsView::mousePressEvent(event);
 }
@@ -122,6 +133,32 @@ void screenshotView::mouseMoveEvent(QMouseEvent *event)
         }
 
         currentArrowItem->setEnd(end);
+    }
+    if(state->isDrawingPen() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
+        QPainterPath path = currentPenItem->path();
+
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+        if(event->pos().x() < selectRect.left() && event->pos().y() < selectRect.top()){
+            path.lineTo(QPointF(selectRect.left(),selectRect.top()));
+        }else if(event->pos().x() < selectRect.left() && event->pos().y() > selectRect.bottom()){
+            path.lineTo(QPointF(selectRect.left(),selectRect.bottom()));
+        }else if(event->pos().x() > selectRect.right() && event->pos().y() < selectRect.top()){
+            path.lineTo(QPointF(selectRect.right(),selectRect.top()));
+        }else if(event->pos().x() > selectRect.right() && event->pos().y() > selectRect.bottom()){
+            path.lineTo(QPointF(selectRect.right(),selectRect.bottom()));
+        }else if(event->pos().x() < selectRect.left()){
+            path.lineTo(QPointF(selectRect.left(),event->pos().y()));
+        }else if(event->pos().y() < selectRect.top()){
+            path.lineTo(QPointF(event->pos().x(),selectRect.top()));
+        }else if(event->pos().x() > selectRect.right()){
+            path.lineTo(QPointF(selectRect.right(),event->pos().y()));
+        }else if(event->pos().y() > selectRect.bottom()){
+            path.lineTo(QPointF(event->pos().x(),selectRect.bottom()));
+        }else{
+            path.lineTo(QPointF(event->pos().x(),event->pos().y()));
+        }
+
+        currentPenItem->setPath(path);
     }
     QGraphicsView::mouseMoveEvent(event);
 }
@@ -202,6 +239,13 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         redoManager* myRedoManager = redoManager::getInstance();
         myUndoManager->pushOrder(addOrder);
         myRedoManager->clear();
+    }
+    if(state->isDrawingPen() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+        myPenItem* newPenItem = new myPenItem(currentPenItem->path());
+        newPenItem->setPen(currentPenItem->pen());
+        scene->addItem(newPenItem);
+
+        currentPenItem->setPath(QPainterPath());
     }
     QGraphicsView::mouseReleaseEvent(event);
 }
