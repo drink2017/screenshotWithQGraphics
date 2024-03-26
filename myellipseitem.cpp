@@ -187,8 +187,7 @@ void myEllipseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         order* moveOrder = undoManager::getInstance()->popOrder();
         myEllipseItem* moveBeforeItem = dynamic_cast<myEllipseItem*>(moveOrder->getDeleteItem().back());
         if(moveBeforeItem->rect() == this->rect() && moveBeforeItem->pos() == this->pos()){
-            QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
-            delete deleteItem.back();
+            delete moveBeforeItem;
             delete moveOrder;
         }else{
             moveOrder->addToAddItem(this);

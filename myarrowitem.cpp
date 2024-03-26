@@ -1,6 +1,9 @@
 #include "myarrowitem.h"
 #include "screenshotview.h"
 #include "commandmanager.h"
+#include "order.h"
+#include "undomanager.h"
+#include "redomanager.h"
 
 #include <QPainter>
 #include <cmath>
@@ -89,12 +92,16 @@ void myArrowItem::setPen(QPen commandPen){
 
 void myArrowItem::setStart(QPoint startPoint){
     this->start_pos = startPoint;
-    this->scene()->update();
+    if(this->scene() != nullptr){
+        this->scene()->update();
+    }
 }
 
 void myArrowItem::setEnd(QPoint endPoint){
     this->end_pos = endPoint;
-    this->scene()->update();
+    if(this->scene() != nullptr){
+        this->scene()->update();
+    }
 }
 
 void myArrowItem::createEllipseHandles(){
@@ -159,6 +166,11 @@ void myArrowItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
     commandManager::getInstance()->setEditingItem(true);
     type = mousePointIn(event->pos());
+
+    myArrowItem* moveBeforeItem = new myArrowItem(mapToScene(this->getStart()),mapToScene(this->getEnd()));
+    order* moveOrder = new order();
+    moveOrder->addToDeleteItem(moveBeforeItem);
+    undoManager::getInstance()->pushOrder(moveOrder);
 }
 
 void myArrowItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -233,5 +245,51 @@ void myArrowItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             this->updateEllipseHandles();
         }
         commandManager::getInstance()->setEditingItem(false);
+
+        order* moveOrder = undoManager::getInstance()->popOrder();
+        myArrowItem* moveBeforeItem = dynamic_cast<myArrowItem*>(moveOrder->getDeleteItem().back());
+
+        QRect beforeRect = moveBeforeItem->mapToScene(moveBeforeItem->boundingRect()).boundingRect().toRect();
+        QRect afterRect = this->mapToScene(this->boundingRect()).boundingRect().toRect();
+
+        if(beforeRect.x() == afterRect.x() && beforeRect.y() == afterRect.y() && beforeRect.width() == afterRect.width() && beforeRect.height() == afterRect.height()){
+            QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
+            delete deleteItem.back();
+            delete moveOrder;
+        }else{
+            moveOrder->addToAddItem(this);
+            undoManager::getInstance()->pushOrder(moveOrder);
+            redoManager::getInstance()->clear();
+        }
     }
 }
+
+QPointF myArrowItem::getStart(){
+    return start_pos;
+}
+
+QPointF myArrowItem::getEnd(){
+    return end_pos;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

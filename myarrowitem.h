@@ -19,7 +19,9 @@ public:
     void setPen(QPen commandPen);
 
     void setStart(QPoint startPoint);
+    QPointF getStart();
     void setEnd(QPoint endPoint);
+    QPointF getEnd();
 
     void updateEllipseHandles();
 

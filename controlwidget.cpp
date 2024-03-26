@@ -286,6 +286,23 @@ void controlWidget::undo(){
                 undoOrder->addToAddItem(afterMoveItem);
                 undoOrder->addToDeleteItem(beforeMoveItem);
                 myRedoManager->pushOrder(undoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myArrowItem)){
+                myArrowItem* beforeMoveItem = dynamic_cast<myArrowItem*>(deleteItem.back());
+                myArrowItem* afterMoveItem = dynamic_cast<myArrowItem*>(addItem.back());
+                QPointF afterMoveStart = afterMoveItem->getStart();
+                QPointF afterMoveEnd = afterMoveItem->getEnd();
+                afterMoveItem->setStart((afterMoveItem->mapFromScene((beforeMoveItem->mapToScene(beforeMoveItem->getStart())))).toPoint());
+                afterMoveItem->setEnd((afterMoveItem->mapFromScene(beforeMoveItem->mapToScene(beforeMoveItem->getEnd()))).toPoint());
+                afterMoveItem->updateEllipseHandles();
+                //beforeMoveItem->setStart(afterMoveStart.toPoint());
+                //beforeMoveItem->setEnd(afterMoveEnd.toPoint());
+                beforeMoveItem->setStart((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveStart))).toPoint());
+                beforeMoveItem->setEnd((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveEnd))).toPoint());
+                undoOrder->clearAddItem();
+                undoOrder->clearDeleteItem();
+                undoOrder->addToAddItem(afterMoveItem);
+                undoOrder->addToDeleteItem(beforeMoveItem);
+                myRedoManager->pushOrder(undoOrder);
             }
         }
     }
@@ -327,14 +344,31 @@ void controlWidget::redo(){
             }else if(typeid (itemHasDeleted) == typeid (myEllipseItem)){
                 myEllipseItem* beforeMoveItem = dynamic_cast<myEllipseItem*>(deleteItem.back());
                 myEllipseItem* afterMoveItem = dynamic_cast<myEllipseItem*>(addItem.back());
-                QRectF afterMOveRect = afterMoveItem->rect();
+                QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
                 afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
-                beforeMoveItem->setRect(afterMOveRect);
+                beforeMoveItem->setRect(afterMoveRect);
                 beforeMoveItem->setPos(afterMovePos);
+                redoOrder->clearAddItem();
+                redoOrder->clearDeleteItem();
+                redoOrder->addToAddItem(afterMoveItem);
+                redoOrder->addToDeleteItem(beforeMoveItem);
+                myUndoManager->pushOrder(redoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myArrowItem)){
+                myArrowItem* beforeMoveItem = dynamic_cast<myArrowItem*>(deleteItem.back());
+                myArrowItem* afterMoveItem = dynamic_cast<myArrowItem*>(addItem.back());
+                QPointF afterMoveStart = afterMoveItem->getStart();
+                QPointF afterMoveEnd = afterMoveItem->getEnd();
+                afterMoveItem->setStart((afterMoveItem->mapFromScene((beforeMoveItem->mapToScene(beforeMoveItem->getStart())))).toPoint());
+                afterMoveItem->setEnd((afterMoveItem->mapFromScene(beforeMoveItem->mapToScene(beforeMoveItem->getEnd()))).toPoint());
+                afterMoveItem->updateEllipseHandles();
+                //beforeMoveItem->setStart(afterMoveStart.toPoint());
+                //beforeMoveItem->setEnd(afterMoveEnd.toPoint());
+                beforeMoveItem->setStart((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveStart))).toPoint());
+                beforeMoveItem->setEnd((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveEnd))).toPoint());
                 redoOrder->clearAddItem();
                 redoOrder->clearDeleteItem();
                 redoOrder->addToAddItem(afterMoveItem);
