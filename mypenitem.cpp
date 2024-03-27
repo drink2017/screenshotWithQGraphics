@@ -1,6 +1,9 @@
 #include "mypenitem.h"
 #include "commandmanager.h"
 #include "screenshotview.h"
+#include "order.h"
+#include "undomanager.h"
+#include "redomanager.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
@@ -30,6 +33,11 @@ void myPenItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if(isMouseOnBoundary(event->pos())){
         QGraphicsPathItem::mousePressEvent(event);
         commandManager::getInstance()->setEditingItem(true);
+
+        myPenItem* moveBeforeItem = new myPenItem(this->path());
+        order* moveOrder = new order();
+        moveOrder->addToDeleteItem(moveBeforeItem);
+        undoManager::getInstance()->pushOrder(moveOrder);
     }else{
         scene()->clearSelection();
     }
@@ -82,6 +90,19 @@ void myPenItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(this->isSelected()){
         QGraphicsPathItem::mouseReleaseEvent(event);
         commandManager::getInstance()->setEditingItem(false);
+
+        order* moveOrder = undoManager::getInstance()->popOrder();
+        myPenItem* moveBeforeItem = dynamic_cast<myPenItem*>(moveOrder->getDeleteItem().back());
+
+        if(moveBeforeItem->mapToScene(moveBeforeItem->path()) == this->mapToScene(this->path())){
+            QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
+            delete deleteItem.back();
+            delete moveOrder;
+        }else{
+            moveOrder->addToAddItem(this);
+            undoManager::getInstance()->pushOrder(moveOrder);
+            redoManager::getInstance()->clear();
+        }
     }
 }
 

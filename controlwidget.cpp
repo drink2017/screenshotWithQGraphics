@@ -4,6 +4,7 @@
 #include "redomanager.h"
 #include "myrectitem.h"
 #include "myellipseitem.h"
+#include "mypenitem.h"
 
 #include <commandmanager.h>
 #include <QGuiApplication>
@@ -330,6 +331,17 @@ void controlWidget::undo(){
                 undoOrder->addToAddItem(afterMoveItem);
                 undoOrder->addToDeleteItem(beforeMoveItem);
                 myRedoManager->pushOrder(undoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myPenItem)){
+                myPenItem* beforeMoveItem = dynamic_cast<myPenItem*>(deleteItem.back());
+                myPenItem* afterMoveItem = dynamic_cast<myPenItem*>(addItem.back());
+                QPainterPath afterMovePath = afterMoveItem->path();
+                afterMoveItem->setPath(afterMoveItem->mapFromScene(beforeMoveItem->mapToScene(beforeMoveItem->path())));
+                beforeMoveItem->setPath(beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMovePath)));
+                undoOrder->clearAddItem();
+                undoOrder->clearDeleteItem();
+                undoOrder->addToAddItem(afterMoveItem);
+                undoOrder->addToDeleteItem(beforeMoveItem);
+                myRedoManager->pushOrder(undoOrder);
             }
         }
     }
@@ -394,6 +406,17 @@ void controlWidget::redo(){
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setStart((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveStart))).toPoint());
                 beforeMoveItem->setEnd((beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMoveEnd))).toPoint());
+                redoOrder->clearAddItem();
+                redoOrder->clearDeleteItem();
+                redoOrder->addToAddItem(afterMoveItem);
+                redoOrder->addToDeleteItem(beforeMoveItem);
+                myUndoManager->pushOrder(redoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myPenItem)){
+                myPenItem* beforeMoveItem = dynamic_cast<myPenItem*>(deleteItem.back());
+                myPenItem* afterMoveItem = dynamic_cast<myPenItem*>(addItem.back());
+                QPainterPath afterMovePath = afterMoveItem->path();
+                afterMoveItem->setPath(afterMoveItem->mapFromScene(beforeMoveItem->mapToScene(beforeMoveItem->path())));
+                beforeMoveItem->setPath(beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMovePath)));
                 redoOrder->clearAddItem();
                 redoOrder->clearDeleteItem();
                 redoOrder->addToAddItem(afterMoveItem);

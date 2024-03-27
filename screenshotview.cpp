@@ -244,8 +244,14 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         myPenItem* newPenItem = new myPenItem(currentPenItem->path());
         newPenItem->setPen(currentPenItem->pen());
         scene->addItem(newPenItem);
-
         currentPenItem->setPath(QPainterPath());
+
+        order* addOrder = new order();
+        addOrder->addToAddItem(newPenItem);
+        undoManager* myUndoManager = undoManager::getInstance();
+        redoManager* myRedoManager = redoManager::getInstance();
+        myUndoManager->pushOrder(addOrder);
+        myRedoManager->clear();
     }
     QGraphicsView::mouseReleaseEvent(event);
 }
