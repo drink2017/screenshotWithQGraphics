@@ -4,6 +4,7 @@
 #include "myrectitem.h"
 #include "myellipseitem.h"
 #include "myarrowitem.h"
+#include "mypenitem.h"
 
 #include <QPen>
 #include <QGraphicsSceneMouseEvent>
@@ -128,6 +129,7 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         commandManager::getInstance()->disableDrawRect();
         commandManager::getInstance()->disableDrawEllipse();
         commandManager::getInstance()->disableDrawArrow();
+        commandManager::getInstance()->disableDrawPen();
         isChaningArea = true;
 
         QList<myRectItem*> editedRectItems;
@@ -153,6 +155,15 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             if(myArrowItem* editedArrowItem = dynamic_cast<myArrowItem*>(item)){
                 if(editedArrowItem->flags() & QGraphicsItem::ItemIsMovable){
                     editedArrowItems.append(editedArrowItem);
+                }
+            }
+        }
+
+        QList<myPenItem*> editedPenItems;
+        foreach(QGraphicsItem* item,this->scene()->items()){
+            if(myPenItem* editedPenItem = dynamic_cast<myPenItem*>(item)){
+                if(editedPenItem->flags() & QGraphicsItem::ItemIsMovable){
+                    editedPenItems.append(editedPenItem);
                 }
             }
         }
@@ -208,6 +219,23 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 }
                 if((sceneRect.y()+sceneRect.height()) > maxY){
                     maxY = sceneRect.y()+sceneRect.height();
+                }
+            }
+        }
+        if(!editedPenItems.isEmpty()){
+            foreach(myPenItem* editedPenItem,editedPenItems){
+                QRectF sceneRect = editedPenItem->mapToScene(editedPenItem->boundingRect()).boundingRect();
+                if(sceneRect.x() < minX){
+                    minX = sceneRect.x();
+                }
+                if(sceneRect.y() < minY){
+                    minY = sceneRect.y();
+                }
+                if((sceneRect.x()+sceneRect.width()) > maxX){
+                    maxX = sceneRect.x()+sceneRect.width();
+                }
+                if((sceneRect.y()+sceneRect.height()) > maxY){
+                    maxY = sceneRect.y() + sceneRect.height();
                 }
             }
         }

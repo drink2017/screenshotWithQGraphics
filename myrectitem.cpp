@@ -121,7 +121,7 @@ void myRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void myRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(this->isSelected() && commandManager::getInstance()->isEditingItem() && type == rect_no){
+    if(this->isSelected() && type == rect_no){
         QGraphicsRectItem::mouseMoveEvent(event);
     }
     if(type == rect_top_left){

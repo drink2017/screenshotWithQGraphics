@@ -424,6 +424,11 @@ void controlWidget::updateButtonStatu(){
     }else{
         pArrowButton->setChecked(false);
     }
+    if(commandManager::getInstance()->isDrawingPen()){
+        pPenButton->setChecked(true);
+    }else{
+        pPenButton->setChecked(false);
+    }
 }
 
 

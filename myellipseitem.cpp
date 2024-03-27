@@ -123,7 +123,7 @@ void myEllipseItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void myEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(this->isSelected() && commandManager::getInstance()->isEditingItem() && type == ellipse_rect_no){
+    if(this->isSelected() && type == ellipse_rect_no){
         QGraphicsEllipseItem::mouseMoveEvent(event);
     }
     if(type == ellipse_rect_top){

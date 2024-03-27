@@ -175,7 +175,7 @@ void myArrowItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void myArrowItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(this->isSelected() && commandManager::getInstance()->isEditingItem() && type == arrow_no){
+    if(this->isSelected() && type == arrow_no){
         QGraphicsItem::mouseMoveEvent(event);
     }
     if(type == arrow_start){
