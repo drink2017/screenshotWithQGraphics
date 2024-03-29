@@ -34,6 +34,25 @@ void myTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void myTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseMoveEvent(event);
+    QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+    QRectF textRect = this->mapToScene(this->boundingRect()).boundingRect();
+    if(textRect.x() < selectRect.x() && textRect.y() < selectRect.y()){
+        setPos(selectRect.x(),selectRect.y());
+    }else if(textRect.x() < selectRect.x() && textRect.bottom() > selectRect.bottom()){
+        setPos(selectRect.x(),selectRect.bottom()-textRect.height());
+    }else if(textRect.right() > selectRect.right() && textRect.top() < selectRect.top()){
+        setPos(selectRect.right()-textRect.width(),selectRect.top());
+    }else if(textRect.right() > selectRect.right() && textRect.bottom() > selectRect.bottom()){
+        setPos(selectRect.right()-textRect.width(),selectRect.bottom()-textRect.height());
+    }else if(textRect.left() < selectRect.left()){
+        setX(selectRect.x());
+    }else if(textRect.top() < selectRect.top()){
+        setY(selectRect.top());
+    }else if(textRect.right() > selectRect.right()){
+        setX(selectRect.right()-textRect.width());
+    }else if(textRect.bottom() > selectRect.bottom()){
+        setY(selectRect.bottom()-textRect.height());
+    }
 }
 
 void myTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

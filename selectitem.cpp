@@ -5,6 +5,7 @@
 #include "myellipseitem.h"
 #include "myarrowitem.h"
 #include "mypenitem.h"
+#include "mytextitem.h"
 
 #include <QPen>
 #include <QGraphicsSceneMouseEvent>
@@ -168,6 +169,15 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
         }
 
+        QList<myTextItem*> editedTextItems;
+        foreach(QGraphicsItem* item,this->scene()->items()){
+            if(myTextItem* editedTextItem = dynamic_cast<myTextItem*>(item)){
+                if(editedTextItem->flags() & QGraphicsItem::ItemIsMovable){
+                    editedTextItems.append(editedTextItem);
+                }
+            }
+        }
+
         minX = 10000;
         minY = 10000;
         maxX = 0;
@@ -236,6 +246,23 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 }
                 if((sceneRect.y()+sceneRect.height()) > maxY){
                     maxY = sceneRect.y() + sceneRect.height();
+                }
+            }
+        }
+        if(!editedTextItems.isEmpty()){
+            foreach(myTextItem* editedTextItem,editedTextItems){
+                QRectF textRect = editedTextItem->mapToScene(editedTextItem->boundingRect()).boundingRect();
+                if(textRect.x() < minX){
+                    minX = textRect.x();
+                }
+                if(textRect.y() < minY){
+                    minY = textRect.y();
+                }
+                if(textRect.right() > maxX){
+                    maxX = textRect.right();
+                }
+                if(textRect.bottom() > maxY){
+                    maxY = textRect.bottom();
                 }
             }
         }

@@ -261,6 +261,7 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         font.setPointSize(screenshotView::getInstance()->getControl()->myTextWidget->settings->getTextSize());
         currentTextItem->setFont(font);
         scene->addItem(currentTextItem);
+        currentTextItem->setFocus();
     }
     QGraphicsView::mouseReleaseEvent(event);
 }
