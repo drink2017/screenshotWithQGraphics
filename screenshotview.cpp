@@ -6,6 +6,7 @@
 #include "myrectitem.h"
 #include "myellipseitem.h"
 #include "mypenitem.h"
+#include "mytextitem.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -157,7 +158,6 @@ void screenshotView::mouseMoveEvent(QMouseEvent *event)
         }else{
             path.lineTo(QPointF(event->pos().x(),event->pos().y()));
         }
-
         currentPenItem->setPath(path);
     }
     QGraphicsView::mouseMoveEvent(event);
@@ -252,6 +252,15 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         redoManager* myRedoManager = redoManager::getInstance();
         myUndoManager->pushOrder(addOrder);
         myRedoManager->clear();
+    }
+    if(state->isDrawingText() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+        myTextItem* currentTextItem = new myTextItem();
+        currentTextItem->setPos(event->pos());
+        currentTextItem->setDefaultTextColor(screenshotView::getInstance()->getControl()->myTextWidget->settings->getTextColor());
+        QFont font;
+        font.setPointSize(screenshotView::getInstance()->getControl()->myTextWidget->settings->getTextSize());
+        currentTextItem->setFont(font);
+        scene->addItem(currentTextItem);
     }
     QGraphicsView::mouseReleaseEvent(event);
 }

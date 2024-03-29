@@ -21,6 +21,8 @@ public:
     void setDrawingArrow(bool drawingArrow);
     bool isDrawingPen();
     void setDrawingPen(bool drawingPen);
+    bool isDrawingText();
+    void setDrawingText(bool drawingText);
     bool isEditingItem();
     void setEditingItem(bool editingItem);
 
@@ -36,6 +38,7 @@ public:
     QPen ellipsePen;
     QPen arrowPen;
     QPen penPen;
+    //QPen textPen;
 
 private:
     static commandManager* instance;
@@ -49,6 +52,7 @@ private:
     bool drawingEllipse = false;
     bool drawingArrow = false;
     bool drawingPen = false;
+    bool drawingText = false;
 
 public slots:
     void enableDrawRect();
@@ -59,6 +63,8 @@ public slots:
     void disableDrawArrow();
     void enableDrawPen();
     void disableDrawPen();
+    void enableDrawText();
+    void disableDrawText();
     void quit();
 };
 

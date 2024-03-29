@@ -57,6 +57,14 @@ void commandManager::setDrawingPen(bool drawingPen){
     this->drawingPen = drawingPen;
 }
 
+bool commandManager::isDrawingText(){
+    return drawingText;
+}
+
+void commandManager::setDrawingText(bool drawingText){
+    this->drawingText = drawingText;
+}
+
 bool commandManager::isEditingItem(){
     return editingItem;
 }
@@ -74,6 +82,8 @@ void commandManager::connectToControlWidget(){
     connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawArrow,this,&commandManager::disableDrawArrow);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawPen,this,&commandManager::enableDrawPen);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawPen,this,&commandManager::disableDrawPen);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawText,this,&commandManager::enableDrawText);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawText,this,&commandManager::disableDrawText);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::quit,this,&commandManager::quit);
 }
 
@@ -107,6 +117,14 @@ void commandManager::enableDrawPen(){
 
 void commandManager::disableDrawPen(){
     drawingPen = false;
+}
+
+void commandManager::enableDrawText(){
+    drawingText = true;
+}
+
+void commandManager::disableDrawText(){
+    drawingText = false;
 }
 
 void commandManager::quit(){

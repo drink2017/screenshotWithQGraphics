@@ -26,11 +26,13 @@ SOURCES += \
     myellipseitem.cpp \
     mypenitem.cpp \
     myrectitem.cpp \
+    mytextitem.cpp \
     order.cpp \
     redomanager.cpp \
     screenshotview.cpp \
     selectitem.cpp \
     settings.cpp \
+    textsettings.cpp \
     textwidget.cpp \
     undomanager.cpp
 
@@ -44,11 +46,13 @@ HEADERS += \
     myellipseitem.h \
     mypenitem.h \
     myrectitem.h \
+    mytextitem.h \
     order.h \
     redomanager.h \
     screenshotview.h \
     selectitem.h \
     settings.h \
+    textsettings.h \
     textwidget.h \
     undomanager.h
 

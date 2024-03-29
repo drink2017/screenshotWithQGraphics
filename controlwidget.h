@@ -3,6 +3,7 @@
 
 #include "colorwidget.h"
 #include "settings.h"
+#include "textwidget.h"
 
 #include <QWidget>
 #include <QPushButton>
@@ -15,6 +16,7 @@ public:
     explicit controlWidget(QWidget *parent = nullptr);
 
     colorWidget* myColorWidget;
+    textWidget* myTextWidget;
 
     QRect getLocationRect();
 
@@ -32,7 +34,7 @@ private:
     QPushButton* pRoundButton;
     QPushButton* pArrowButton;
     QPushButton* pPenButton;
-    QPushButton* PTextButton;
+    QPushButton* pTextButton;
     QPushButton* pSerialButton;
     QPushButton* pUndoButton;
     QPushButton* pRedoButton;
@@ -53,6 +55,7 @@ public slots:
     void roundButtonStatu();
     void arrowButtonStatu();
     void penButtonStatu();
+    void textButtonStatu();
     void undo();
     void redo();
 
@@ -65,6 +68,8 @@ signals:
     void disableDrawArrow();
     void enableDrawPen();
     void disableDrawPen();
+    void enableDrawText();
+    void disableDrawText();
     void quit();
 };
 

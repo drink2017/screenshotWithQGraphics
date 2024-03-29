@@ -351,6 +351,7 @@ void selectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             screenshotView::getInstance()->getControl()->updateButtonStatu();
             screenshotView::getInstance()->getControl()->hide();
             screenshotView::getInstance()->getControl()->myColorWidget->hide();
+            screenshotView::getInstance()->getControl()->myTextWidget->hide();
         }
     }
 }

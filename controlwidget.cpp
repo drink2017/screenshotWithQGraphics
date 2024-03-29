@@ -18,14 +18,11 @@ controlWidget::controlWidget(QWidget *parent) : QWidget(parent)
     setWindowFlags(Qt::FramelessWindowHint);
     setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
 
-    QPoint selectStart = screenshotView::getInstance()->getSelectStart();
-    QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
-
     myColorWidget = new colorWidget();
     myColorWidget->hide();
 
-    //设置位置
-    setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    myTextWidget = new textWidget();
+    myTextWidget->hide();
 
     setButtons();
     pLayout = new QHBoxLayout(this);
@@ -39,7 +36,7 @@ controlWidget::controlWidget(QWidget *parent) : QWidget(parent)
 void controlWidget::setLocation(QPoint selectStart,QPoint selectEnd){
     QScreen* screen = QGuiApplication::primaryScreen();
     int screenHeight = screen->size().height();
-    if(!myColorWidget->isVisible()){
+    if(!myColorWidget->isVisible() && !myTextWidget->isVisible()){
         if(selectEnd.x() < 422){
             if(selectStart.y() < 44 && (screenHeight - selectEnd.y()) < 44){
                 locationRect.setRect(0,selectStart.y(),386,44);
@@ -57,7 +54,7 @@ void controlWidget::setLocation(QPoint selectStart,QPoint selectEnd){
                 locationRect.setRect(selectEnd.x() - 422,selectEnd.y(),386,44);
             }
         }
-    }else{
+    }else if(myColorWidget->isVisible() && !myTextWidget->isVisible()){
         if(selectEnd.x() < 422){
             if(selectStart.y() < 98 && (screenHeight - selectEnd.y()) < 98){
                 locationRect.setRect(0,selectStart.y(),386,44);
@@ -79,6 +76,30 @@ void controlWidget::setLocation(QPoint selectStart,QPoint selectEnd){
             }else{
                 locationRect.setRect(selectEnd.x() - 422,selectEnd.y(),386,44);
                 myColorWidget->setLocationBelow();
+            }
+        }
+    }else if(!myColorWidget->isVisible() && myTextWidget->isVisible()){
+        if(selectEnd.x() < 422){
+            if(selectStart.y() < 98 && (screenHeight - selectEnd.y()) < 98){
+                locationRect.setRect(0,selectStart.y(),386,44);
+                myTextWidget->setLocationBelow();
+            }else if((screenHeight - selectEnd.y()) < 98){
+                locationRect.setRect(0,selectStart.y() - 44,386,44);
+                myTextWidget->setLocationAbove();
+            }else{
+                locationRect.setRect(0,selectEnd.y(),386,44);
+                myTextWidget->setLocationBelow();
+            }
+        }else{
+            if(selectStart.y() < 98 && (screenHeight - selectEnd.y()) < 98){
+                locationRect.setRect(selectEnd.x() - 422,selectStart.y(),386,44);
+                myTextWidget->setLocationBelow();
+            }else if((screenHeight - selectEnd.y()) < 98){
+                locationRect.setRect(selectEnd.x() - 422,selectStart.y() - 44,386,44);
+                myTextWidget->setLocationAbove();
+            }else{
+                locationRect.setRect(selectEnd.x() - 422,selectEnd.y(),386,44);
+                myTextWidget->setLocationBelow();
             }
         }
     }
@@ -119,11 +140,13 @@ void controlWidget::setButtons(){
     QIcon penIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\pen.png");
     pPenButton->setIcon(penIcon);
 
-    PTextButton = new QPushButton;
-    PTextButton->setFixedSize(QSize(32,32));
-    PTextButton->setToolTip("文字");
+    pTextButton = new QPushButton;
+    pTextButton->setFixedSize(QSize(32,32));
+    pTextButton->setToolTip("文字");
+    pTextButton->setCheckable(true);
+    pTextButton->setChecked(false);
     QIcon textIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\text.png");
-    PTextButton->setIcon(textIcon);
+    pTextButton->setIcon(textIcon);
 
     pSerialButton = new QPushButton;
     pSerialButton->setFixedSize(QSize(32,32));
@@ -161,7 +184,7 @@ void controlWidget::addButtonsToLayout(){
     pLayout->addWidget(pRoundButton);
     pLayout->addWidget(pArrowButton);
     pLayout->addWidget(pPenButton);
-    pLayout->addWidget(PTextButton);
+    pLayout->addWidget(pTextButton);
     pLayout->addWidget(pSerialButton);
     pLayout->addWidget(pUndoButton);
     pLayout->addWidget(pRedoButton);
@@ -174,6 +197,7 @@ void controlWidget::connectToSlots(){
     connect(pRoundButton,&QPushButton::clicked,this,&controlWidget::roundButtonStatu);
     connect(pArrowButton,&QPushButton::clicked,this,&controlWidget::arrowButtonStatu);
     connect(pPenButton,&QPushButton::clicked,this,&controlWidget::penButtonStatu);
+    connect(pTextButton,&QPushButton::clicked,this,&controlWidget::textButtonStatu);
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
     connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
@@ -183,11 +207,14 @@ void controlWidget::rectButtonStatu(){
     pRoundButton->setChecked(false);
     pArrowButton->setChecked(false);
     pPenButton->setChecked(false);
+    pTextButton->setChecked(false);
     if(pRectButton->isChecked()){
         emit enableDrawRect();
         emit disableDrawRound();
         emit disableDrawArrow();
         emit disableDrawPen();
+        emit disableDrawText();
+        myTextWidget->hide();
         myColorWidget->setType(widgetType::rect);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
@@ -205,11 +232,14 @@ void controlWidget::roundButtonStatu(){
     pRectButton->setChecked(false);
     pArrowButton->setChecked(false);
     pPenButton->setChecked(false);
+    pTextButton->setChecked(false);
     if(pRoundButton->isChecked()){
         emit enableDrawRound();
         emit disableDrawRect();
         emit disableDrawArrow();
         emit disableDrawPen();
+        emit disableDrawText();
+        myTextWidget->hide();
         myColorWidget->setType(widgetType::ellipse);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
@@ -227,11 +257,14 @@ void controlWidget::arrowButtonStatu(){
     pRectButton->setChecked(false);
     pRoundButton->setChecked(false);
     pPenButton->setChecked(false);
+    pTextButton->setChecked(false);
     if(pArrowButton->isChecked()){
         emit enableDrawArrow();
         emit disableDrawRect();
         emit disableDrawRound();
         emit disableDrawPen();
+        emit disableDrawText();
+        myTextWidget->hide();
         myColorWidget->setType(widgetType::arrow);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
@@ -249,11 +282,14 @@ void controlWidget::penButtonStatu(){
     pRectButton->setChecked(false);
     pRoundButton->setChecked(false);
     pArrowButton->setChecked(false);
+    pTextButton->setChecked(false);
     if(pPenButton->isChecked()){
         emit enableDrawPen();
         emit disableDrawRect();
         emit disableDrawRound();
         emit disableDrawArrow();
+        emit disableDrawText();
+        myTextWidget->hide();
         myColorWidget->setType(widgetType::pen);
         myColorWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
@@ -261,6 +297,31 @@ void controlWidget::penButtonStatu(){
         setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
     }else{
         myColorWidget->hide();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }
+}
+
+void controlWidget::textButtonStatu(){
+    pRectButton->setChecked(false);
+    pRoundButton->setChecked(false);
+    pArrowButton->setChecked(false);
+    pPenButton->setChecked(false);
+    if(pTextButton->isChecked()){
+        emit disableDrawRect();
+        emit disableDrawRound();
+        emit disableDrawArrow();
+        emit disableDrawPen();
+        emit enableDrawText();
+        myColorWidget->hide();
+        myTextWidget->setType(textWidgetType::text);
+        myTextWidget->show();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }else{
+        myTextWidget->hide();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
         QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
         setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
@@ -451,6 +512,11 @@ void controlWidget::updateButtonStatu(){
         pPenButton->setChecked(true);
     }else{
         pPenButton->setChecked(false);
+    }
+    if(commandManager::getInstance()->isDrawingText()){
+        pTextButton->setChecked(true);
+    }else{
+        pTextButton->setChecked(false);
     }
 }
 
