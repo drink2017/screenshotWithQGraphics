@@ -50,6 +50,8 @@ private:
     myArrowItem* currentArrowItem = new myArrowItem(QPointF(),QPointF());
     QGraphicsPathItem* currentPenItem = new QGraphicsPathItem();
 
+    bool focusOnText;
+
     // QWidget interface
 protected:
     void mousePressEvent(QMouseEvent *event) override;

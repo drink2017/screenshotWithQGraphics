@@ -1,15 +1,16 @@
 #include "mytextitem.h"
 #include "commandmanager.h"
 #include "screenshotview.h"
+#include "undomanager.h"
+#include "redomanager.h"
 
-#include <QCursor>
 #include <QDebug>
 #include <QTextDocument>
 
 myTextItem::myTextItem(QGraphicsItem* parent) : QGraphicsTextItem(parent)
 {
     setFlags(ItemIsMovable | ItemIsSelectable);
-    this->setTextInteractionFlags(Qt::TextEditorInteraction);
+    setTextInteractionFlags(Qt::TextEditorInteraction);
 
     setAcceptHoverEvents(true);
 
@@ -29,6 +30,13 @@ void myTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     commandManager::getInstance()->setEditingItem(true);
     QGraphicsItem::mousePressEvent(event);
+
+    myTextItem* moveBeforeItem = new myTextItem;
+    moveBeforeItem->setPos(this->pos());
+    moveBeforeItem->setPlainText(moveBeforeItem->toPlainText());
+    order* moveOrder = new order();
+    moveOrder->addToDeleteItem(moveBeforeItem);
+    undoManager::getInstance()->pushOrder(moveOrder);
 }
 
 void myTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -59,6 +67,22 @@ void myTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
     commandManager::getInstance()->setEditingItem(false);
+
+    order* moveOrder = undoManager::getInstance()->popOrder();
+    myTextItem* moveBeforeItem = dynamic_cast<myTextItem*>(moveOrder->getDeleteItem().back());
+
+    QRect beforeRect = moveBeforeItem->mapToScene(moveBeforeItem->boundingRect()).boundingRect().toRect();
+    QRect afterRect = this->mapToScene(this->boundingRect()).boundingRect().toRect();
+
+    if(beforeRect.x() == afterRect.x() && beforeRect.y() == afterRect.y() && beforeRect.width() == afterRect.width() && beforeRect.height() == afterRect.height()){
+        QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
+        delete deleteItem.back();
+        delete moveOrder;
+    }else{
+        moveOrder->addToAddItem(this);
+        undoManager::getInstance()->pushOrder(moveOrder);
+        redoManager::getInstance()->clear();
+    }
 }
 
 void myTextItem::adjustTextWidth(){
@@ -73,34 +97,16 @@ void myTextItem::adjustTextWidth(){
 
 void myTextItem::focusOutEvent(QFocusEvent *event)
 {
-    Q_UNUSED(event);
+    QGraphicsTextItem::focusOutEvent(event);
     if(this->toPlainText().isEmpty()){
         scene()->removeItem(this);
-        delete this;
+        if(!document()->isModified()){
+            undoManager* myUndoManager = undoManager::getInstance();
+            order* undoOrder = myUndoManager->popOrder();
+            delete undoOrder;
+        }else{
+            redoManager* myRedoManager = redoManager::getInstance();
+            myRedoManager->clear();
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

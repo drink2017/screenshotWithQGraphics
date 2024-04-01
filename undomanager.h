@@ -13,6 +13,8 @@ public:
     order* popOrder();
     bool isEmpty();
 
+    //void clear();
+
 private:
     static undoManager* instance;
 

@@ -98,6 +98,8 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
         commandManager::getInstance()->penPen.setWidth(control->myColorWidget->settings->getPenWidth());
         currentPenItem->setPen(commandManager::getInstance()->penPen);
     }
+    QGraphicsItem* focusedItem = scene->focusItem();
+    focusOnText = qgraphicsitem_cast<QGraphicsTextItem*>(focusedItem);
     QGraphicsView::mousePressEvent(event);
 }
 
@@ -253,7 +255,7 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         myUndoManager->pushOrder(addOrder);
         myRedoManager->clear();
     }
-    if(state->isDrawingText() && event->button() == Qt::LeftButton && !state->isEditingItem()){
+    if(state->isDrawingText() && event->button() == Qt::LeftButton && !state->isEditingItem() && !focusOnText){
         myTextItem* currentTextItem = new myTextItem();
         currentTextItem->setPos(event->pos());
         currentTextItem->setDefaultTextColor(screenshotView::getInstance()->getControl()->myTextWidget->settings->getTextColor());
@@ -262,6 +264,13 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         currentTextItem->setFont(font);
         scene->addItem(currentTextItem);
         currentTextItem->setFocus();
+
+        order* addOrder = new order();
+        addOrder->addToAddItem(currentTextItem);
+        undoManager* myUndoManager = undoManager::getInstance();
+        redoManager* myRedoManager = redoManager::getInstance();
+        myUndoManager->pushOrder(addOrder);
+        myRedoManager->clear();
     }
     QGraphicsView::mouseReleaseEvent(event);
 }

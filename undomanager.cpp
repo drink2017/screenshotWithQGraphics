@@ -31,3 +31,7 @@ bool undoManager::isEmpty(){
         return false;
     }
 }
+
+//void undoManager::clear(){
+//    undo.clear();
+//}

@@ -18,7 +18,6 @@ protected:
 
 public slots:
     void adjustTextWidth();
-
 };
 
 #endif // MYTEXTITEM_H

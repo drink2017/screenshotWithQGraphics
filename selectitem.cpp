@@ -6,6 +6,8 @@
 #include "myarrowitem.h"
 #include "mypenitem.h"
 #include "mytextitem.h"
+#include "undomanager.h"
+#include "redomanager.h"
 
 #include <QPen>
 #include <QGraphicsSceneMouseEvent>
@@ -131,6 +133,7 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         commandManager::getInstance()->disableDrawEllipse();
         commandManager::getInstance()->disableDrawArrow();
         commandManager::getInstance()->disableDrawPen();
+        commandManager::getInstance()->disableDrawText();
         isChaningArea = true;
 
         QList<myRectItem*> editedRectItems;
@@ -273,6 +276,9 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void selectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(finishSelect){
+        //undoManager::getInstance()->clear();
+        redoManager::getInstance()->clear();
+        screenshotView::getInstance()->getControl()->updateButtonStatu();
         QPoint oldSelectStart = screenshotView::getInstance()->getSelectStart();
         QPoint oldSelectEnd = screenshotView::getInstance()->getSelectEnd();
         if(type == RECT_TOP_LEFT){

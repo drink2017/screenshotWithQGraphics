@@ -5,6 +5,7 @@
 #include "myrectitem.h"
 #include "myellipseitem.h"
 #include "mypenitem.h"
+#include "mytextitem.h"
 
 #include <commandmanager.h>
 #include <QGuiApplication>
@@ -403,6 +404,20 @@ void controlWidget::undo(){
                 undoOrder->addToAddItem(afterMoveItem);
                 undoOrder->addToDeleteItem(beforeMoveItem);
                 myRedoManager->pushOrder(undoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myTextItem)){
+                myTextItem* beforeMoveItem = dynamic_cast<myTextItem*>(deleteItem.back());
+                myTextItem* afterMoveItem = dynamic_cast<myTextItem*>(addItem.back());
+                if(!afterMoveItem->scene()){
+                    screenshotView::getInstance()->getScene()->addItem(afterMoveItem);
+                }
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                beforeMoveItem->setPos(afterMovePos);
+                undoOrder->clearAddItem();
+                undoOrder->clearDeleteItem();
+                undoOrder->addToAddItem(afterMoveItem);
+                undoOrder->addToDeleteItem(beforeMoveItem);
+                myRedoManager->pushOrder(undoOrder);
             }
         }
     }
@@ -478,6 +493,17 @@ void controlWidget::redo(){
                 QPainterPath afterMovePath = afterMoveItem->path();
                 afterMoveItem->setPath(afterMoveItem->mapFromScene(beforeMoveItem->mapToScene(beforeMoveItem->path())));
                 beforeMoveItem->setPath(beforeMoveItem->mapFromScene(afterMoveItem->mapToScene(afterMovePath)));
+                redoOrder->clearAddItem();
+                redoOrder->clearDeleteItem();
+                redoOrder->addToAddItem(afterMoveItem);
+                redoOrder->addToDeleteItem(beforeMoveItem);
+                myUndoManager->pushOrder(redoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myTextItem)){
+                myTextItem* beforeMoveItem = dynamic_cast<myTextItem*>(deleteItem.back());
+                myTextItem* afterMoveItem = dynamic_cast<myTextItem*>(addItem.back());
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                beforeMoveItem->setPos(afterMovePos);
                 redoOrder->clearAddItem();
                 redoOrder->clearDeleteItem();
                 redoOrder->addToAddItem(afterMoveItem);
