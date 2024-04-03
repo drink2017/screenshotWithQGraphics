@@ -7,6 +7,7 @@
 #include "myellipseitem.h"
 #include "mypenitem.h"
 #include "mytextitem.h"
+#include "mynumberitem.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -99,7 +100,8 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
         currentPenItem->setPen(commandManager::getInstance()->penPen);
     }
     QGraphicsItem* focusedItem = scene->focusItem();
-    focusOnText = qgraphicsitem_cast<QGraphicsTextItem*>(focusedItem);
+    focusOnText = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    focusOnNumber = qgraphicsitem_cast<QGraphicsTextItem*>(focusedItem);
     QGraphicsView::mousePressEvent(event);
 }
 
@@ -271,6 +273,12 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         redoManager* myRedoManager = redoManager::getInstance();
         myUndoManager->pushOrder(addOrder);
         myRedoManager->clear();
+    }
+    if(state->isDrawingNumber() && event->button() == Qt::LeftButton && !state->isEditingItem() && !focusOnNumber){
+        myNumberItem* currentNumberItem = new myNumberItem(state->number);
+        state->number++;
+        currentNumberItem->setPos(event->pos());
+        scene->addItem(currentNumberItem);
     }
     QGraphicsView::mouseReleaseEvent(event);
 }

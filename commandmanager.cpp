@@ -65,6 +65,14 @@ void commandManager::setDrawingText(bool drawingText){
     this->drawingText = drawingText;
 }
 
+bool commandManager::isDrawingNumber(){
+    return drawingNumber;
+}
+
+void commandManager::setDrawingNumber(bool drawingNumber){
+    this->drawingNumber = drawingNumber;
+}
+
 bool commandManager::isEditingItem(){
     return editingItem;
 }
@@ -84,6 +92,8 @@ void commandManager::connectToControlWidget(){
     connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawPen,this,&commandManager::disableDrawPen);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawText,this,&commandManager::enableDrawText);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawText,this,&commandManager::disableDrawText);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::enableDrawNumber,this,&commandManager::enableDrawNumber);
+    connect(screenshotView::getInstance()->getControl(),&controlWidget::disableDrawNumber,this,&commandManager::disableDrawNumber);
     connect(screenshotView::getInstance()->getControl(),&controlWidget::quit,this,&commandManager::quit);
 }
 
@@ -125,6 +135,14 @@ void commandManager::enableDrawText(){
 
 void commandManager::disableDrawText(){
     drawingText = false;
+}
+
+void commandManager::enableDrawNumber(){
+    drawingNumber = true;
+}
+
+void commandManager::disableDrawNumber(){
+    drawingNumber = false;
 }
 
 void commandManager::quit(){

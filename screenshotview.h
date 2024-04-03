@@ -51,6 +51,7 @@ private:
     QGraphicsPathItem* currentPenItem = new QGraphicsPathItem();
 
     bool focusOnText;
+    bool focusOnNumber;
 
     // QWidget interface
 protected:

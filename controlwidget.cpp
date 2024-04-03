@@ -152,6 +152,8 @@ void controlWidget::setButtons(){
     pSerialButton = new QPushButton;
     pSerialButton->setFixedSize(QSize(32,32));
     pSerialButton->setToolTip("序号笔");
+    pSerialButton->setCheckable(true);
+    pSerialButton->setChecked(false);
     QIcon serialIcon("E:\\software\\qt\\qtProjects\\screenshot2\\icon\\serial.png");
     pSerialButton->setIcon(serialIcon);
 
@@ -199,6 +201,7 @@ void controlWidget::connectToSlots(){
     connect(pArrowButton,&QPushButton::clicked,this,&controlWidget::arrowButtonStatu);
     connect(pPenButton,&QPushButton::clicked,this,&controlWidget::penButtonStatu);
     connect(pTextButton,&QPushButton::clicked,this,&controlWidget::textButtonStatu);
+    connect(pSerialButton,&QPushButton::clicked,this,&controlWidget::numberButtonStatu);
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
     connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
@@ -209,12 +212,14 @@ void controlWidget::rectButtonStatu(){
     pArrowButton->setChecked(false);
     pPenButton->setChecked(false);
     pTextButton->setChecked(false);
+    pSerialButton->setChecked(false);
     if(pRectButton->isChecked()){
         emit enableDrawRect();
         emit disableDrawRound();
         emit disableDrawArrow();
         emit disableDrawPen();
         emit disableDrawText();
+        emit disableDrawNumber();
         myTextWidget->hide();
         myColorWidget->setType(widgetType::rect);
         myColorWidget->show();
@@ -234,12 +239,14 @@ void controlWidget::roundButtonStatu(){
     pArrowButton->setChecked(false);
     pPenButton->setChecked(false);
     pTextButton->setChecked(false);
+    pSerialButton->setChecked(false);
     if(pRoundButton->isChecked()){
         emit enableDrawRound();
         emit disableDrawRect();
         emit disableDrawArrow();
         emit disableDrawPen();
         emit disableDrawText();
+        emit disableDrawNumber();
         myTextWidget->hide();
         myColorWidget->setType(widgetType::ellipse);
         myColorWidget->show();
@@ -259,12 +266,14 @@ void controlWidget::arrowButtonStatu(){
     pRoundButton->setChecked(false);
     pPenButton->setChecked(false);
     pTextButton->setChecked(false);
+    pSerialButton->setChecked(false);
     if(pArrowButton->isChecked()){
         emit enableDrawArrow();
         emit disableDrawRect();
         emit disableDrawRound();
         emit disableDrawPen();
         emit disableDrawText();
+        emit disableDrawNumber();
         myTextWidget->hide();
         myColorWidget->setType(widgetType::arrow);
         myColorWidget->show();
@@ -284,12 +293,14 @@ void controlWidget::penButtonStatu(){
     pRoundButton->setChecked(false);
     pArrowButton->setChecked(false);
     pTextButton->setChecked(false);
+    pSerialButton->setChecked(false);
     if(pPenButton->isChecked()){
         emit enableDrawPen();
         emit disableDrawRect();
         emit disableDrawRound();
         emit disableDrawArrow();
         emit disableDrawText();
+        emit disableDrawNumber();
         myTextWidget->hide();
         myColorWidget->setType(widgetType::pen);
         myColorWidget->show();
@@ -309,14 +320,43 @@ void controlWidget::textButtonStatu(){
     pRoundButton->setChecked(false);
     pArrowButton->setChecked(false);
     pPenButton->setChecked(false);
+    pSerialButton->setChecked(false);
     if(pTextButton->isChecked()){
         emit disableDrawRect();
         emit disableDrawRound();
         emit disableDrawArrow();
         emit disableDrawPen();
         emit enableDrawText();
+        emit disableDrawNumber();
         myColorWidget->hide();
         myTextWidget->setType(textWidgetType::text);
+        myTextWidget->show();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }else{
+        myTextWidget->hide();
+        QPoint selectStart = screenshotView::getInstance()->getSelectStart();
+        QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();
+        setLocation(QRect(selectStart,selectEnd).topLeft(),QRect(selectStart,selectEnd).bottomRight());
+    }
+}
+
+void controlWidget::numberButtonStatu(){
+    pRectButton->setChecked(false);
+    pRoundButton->setChecked(false);
+    pArrowButton->setChecked(false);
+    pPenButton->setChecked(false);
+    pTextButton->setChecked(false);
+    if(pSerialButton->isChecked()){
+        emit disableDrawRect();
+        emit disableDrawRound();
+        emit disableDrawArrow();
+        emit disableDrawPen();
+        emit disableDrawText();
+        emit enableDrawNumber();
+        myColorWidget->hide();
+        myTextWidget->setType(textWidgetType::serial);
         myTextWidget->show();
         QPoint selectStart = screenshotView::getInstance()->getSelectStart();
         QPoint selectEnd = screenshotView::getInstance()->getSelectEnd();

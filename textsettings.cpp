@@ -20,3 +20,19 @@ void textSettings::setTextColor(QColor textColor){
 QColor textSettings::getTextColor(){
     return textColor;
 }
+
+void textSettings::setNumberColor(QColor numberColor){
+    this->numberColor = numberColor;
+}
+
+QColor textSettings::getNumberColor(){
+    return numberColor;
+}
+
+void textSettings::setNumberSize(int numberSize){
+    this->numberSize = numberSize;
+}
+
+int textSettings::getNumberSize(){
+    return numberSize;
+}

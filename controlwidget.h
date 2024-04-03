@@ -56,6 +56,7 @@ public slots:
     void arrowButtonStatu();
     void penButtonStatu();
     void textButtonStatu();
+    void numberButtonStatu();
     void undo();
     void redo();
 
@@ -70,6 +71,8 @@ signals:
     void disableDrawPen();
     void enableDrawText();
     void disableDrawText();
+    void enableDrawNumber();
+    void disableDrawNumber();
     void quit();
 };
 

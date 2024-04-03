@@ -1,8 +1,10 @@
 #include "textwidget.h"
 #include "screenshotview.h"
 #include "mytextitem.h"
+#include "mynumberitem.h"
 
 #include <QPainter>
+#include <QDebug>
 
 textWidget::textWidget(QWidget *parent) : QWidget(parent)
 {
@@ -190,6 +192,7 @@ void textWidget::slotOnBlackButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -197,6 +200,13 @@ void textWidget::slotOnBlackButton(){
         }
         settings->setTextColor(Qt::black);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::black);
+        }
+        settings->setNumberColor(Qt::black);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -209,6 +219,7 @@ void textWidget::slotOnDarkGrayButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -216,6 +227,13 @@ void textWidget::slotOnDarkGrayButton(){
         }
         settings->setTextColor(Qt::darkGray);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::darkGray);
+        }
+        settings->setNumberColor(Qt::darkGray);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -228,6 +246,7 @@ void textWidget::slotOnDarkRedButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch(type){
     case textWidgetType::text:
         if(focusedTextItem){
@@ -235,6 +254,13 @@ void textWidget::slotOnDarkRedButton(){
         }
         settings->setTextColor(Qt::darkRed);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::darkRed);
+        }
+        settings->setNumberColor(Qt::darkRed);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -247,6 +273,7 @@ void textWidget::slotOnOrangeButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -254,6 +281,13 @@ void textWidget::slotOnOrangeButton(){
         }
         settings->setTextColor(QColor(255,165,0));
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(QColor(255,165,0));
+        }
+        settings->setNumberColor(QColor(255,165,0));
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -266,6 +300,7 @@ void textWidget::slotOnDarkGreenButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch(type){
     case textWidgetType::text:
         if(focusedTextItem){
@@ -273,6 +308,13 @@ void textWidget::slotOnDarkGreenButton(){
         }
         settings->setTextColor(Qt::darkGreen);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::darkGreen);
+        }
+        settings->setNumberColor(Qt::darkGreen);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -285,6 +327,7 @@ void textWidget::slotOnDarkBlueButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -292,6 +335,13 @@ void textWidget::slotOnDarkBlueButton(){
         }
         settings->setTextColor(Qt::darkBlue);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::darkBlue);
+        }
+        settings->setNumberColor(Qt::darkBlue);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -304,11 +354,21 @@ void textWidget::slotOnDarkMagentaButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
-        focusedTextItem->setDefaultTextColor(Qt::darkMagenta);
+        if(focusedTextItem){
+            focusedTextItem->setDefaultTextColor(Qt::darkMagenta);
+        }
         settings->setTextColor(Qt::darkMagenta);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::darkMagenta);
+        }
+        settings->setNumberColor(Qt::darkMagenta);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -321,6 +381,7 @@ void textWidget::slotOnDarkCyanButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -328,6 +389,13 @@ void textWidget::slotOnDarkCyanButton(){
         }
         settings->setTextColor(Qt::darkCyan);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::darkCyan);
+        }
+        settings->setNumberColor(Qt::darkCyan);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -340,6 +408,7 @@ void textWidget::slotOnWhiteButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -347,6 +416,13 @@ void textWidget::slotOnWhiteButton(){
         }
         settings->setTextColor(Qt::white);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::white);
+        }
+        settings->setNumberColor(Qt::white);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -359,6 +435,7 @@ void textWidget::slotOnLightGrayButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -366,6 +443,13 @@ void textWidget::slotOnLightGrayButton(){
         }
         settings->setTextColor(Qt::lightGray);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::lightGray);
+        }
+        settings->setNumberColor(Qt::lightGray);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -378,6 +462,7 @@ void textWidget::slotOnRedButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -385,6 +470,13 @@ void textWidget::slotOnRedButton(){
         }
         settings->setTextColor(Qt::red);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::red);
+        }
+        settings->setNumberColor(Qt::red);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -397,6 +489,7 @@ void textWidget::slotOnYellowButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -404,6 +497,13 @@ void textWidget::slotOnYellowButton(){
         }
         settings->setTextColor(Qt::yellow);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::yellow);
+        }
+        settings->setNumberColor(Qt::yellow);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -416,11 +516,21 @@ void textWidget::slotOnGreenButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
-        focusedTextItem->setDefaultTextColor(Qt::green);
+        if(focusedTextItem){
+            focusedTextItem->setDefaultTextColor(Qt::green);
+        }
         settings->setTextColor(Qt::green);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::green);
+        }
+        settings->setNumberColor(Qt::green);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -433,11 +543,21 @@ void textWidget::slotOnBlueButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
-        focusedTextItem->setDefaultTextColor(Qt::blue);
+        if(focusedTextItem){
+            focusedTextItem->setDefaultTextColor(Qt::blue);
+        }
         settings->setTextColor(Qt::blue);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::blue);
+        }
+        settings->setNumberColor(Qt::blue);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -450,6 +570,7 @@ void textWidget::slotOnMagentaButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -457,6 +578,13 @@ void textWidget::slotOnMagentaButton(){
         }
         settings->setTextColor(Qt::magenta);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::magenta);
+        }
+        settings->setNumberColor(Qt::magenta);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -469,6 +597,7 @@ void textWidget::slotOnCyanButton(){
     QString color;
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
     switch (type) {
     case textWidgetType::text:
         if(focusedTextItem){
@@ -476,6 +605,13 @@ void textWidget::slotOnCyanButton(){
         }
         settings->setTextColor(Qt::cyan);
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->setColor(Qt::cyan);
+        }
+        settings->setNumberColor(Qt::cyan);
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
@@ -489,6 +625,9 @@ void textWidget::setInitialLabel(){
     switch (type) {
     case textWidgetType::text:
         color = settings->getTextColor().name();
+        break;
+    case textWidgetType::serial:
+        color = settings->getNumberColor().name();
         break;
     default:
         color = "black";
