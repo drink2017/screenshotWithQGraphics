@@ -25,6 +25,7 @@ SOURCES += \
     myarrowitem.cpp \
     myellipseitem.cpp \
     mynumberitem.cpp \
+    mynumbertextitem.cpp \
     mypenitem.cpp \
     myrectitem.cpp \
     mytextitem.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     myarrowitem.h \
     myellipseitem.h \
     mynumberitem.h \
+    mynumbertextitem.h \
     mypenitem.h \
     myrectitem.h \
     mytextitem.h \

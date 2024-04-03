@@ -26,9 +26,8 @@ myNumberItem::myNumberItem(int number,QGraphicsItem* parent):QGraphicsItemGroup(
         serial->setBrush(QColor(Qt::white));
     }
 
-    text = new QGraphicsTextItem();
+    text = new myNumberTextItem();
     text->setPos(20,-15);
-    text->setTextInteractionFlags(Qt::TextEditorInteraction);
     text->setFocus();
 
     addToGroup(ellipse);

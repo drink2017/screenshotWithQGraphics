@@ -1,6 +1,8 @@
 #ifndef MYNUMBERITEM_H
 #define MYNUMBERITEM_H
 
+#include "mynumbertextitem.h"
+
 #include <QGraphicsItemGroup>
 
 class myNumberItem : public QGraphicsItemGroup
@@ -13,7 +15,7 @@ public:
 private:
     QGraphicsEllipseItem* ellipse;
     QGraphicsSimpleTextItem* serial;
-    QGraphicsTextItem* text;
+    myNumberTextItem* text;
 
     // QGraphicsItem interface
 protected:
