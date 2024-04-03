@@ -12,7 +12,6 @@ public:
 
     void setColor(QColor color);
 
-private:
     QGraphicsEllipseItem* ellipse;
     QGraphicsSimpleTextItem* serial;
     myNumberTextItem* text;

@@ -625,9 +625,73 @@ void textWidget::setInitialLabel(){
     switch (type) {
     case textWidgetType::text:
         color = settings->getTextColor().name();
+        switch(settings->getTextSize()){
+        case 8:
+            sizeComboBox->setCurrentIndex(0);
+            break;
+        case 9:
+            sizeComboBox->setCurrentIndex(1);
+            break;
+        case 10:
+            sizeComboBox->setCurrentIndex(2);
+            break;
+        case 11:
+            sizeComboBox->setCurrentIndex(3);
+            break;
+        case 12:
+            sizeComboBox->setCurrentIndex(4);
+            break;
+        case 14:
+            sizeComboBox->setCurrentIndex(5);
+            break;
+        case 16:
+            sizeComboBox->setCurrentIndex(6);
+            break;
+        case 18:
+            sizeComboBox->setCurrentIndex(7);
+            break;
+        case 20:
+            sizeComboBox->setCurrentIndex(8);
+            break;
+        case 22:
+            sizeComboBox->setCurrentIndex(9);
+            break;
+        }
         break;
     case textWidgetType::serial:
         color = settings->getNumberColor().name();
+        switch (settings->getNumberSize()) {
+        case 8:
+            sizeComboBox->setCurrentIndex(0);
+            break;
+        case 9:
+            sizeComboBox->setCurrentIndex(1);
+            break;
+        case 10:
+            sizeComboBox->setCurrentIndex(2);
+            break;
+        case 11:
+            sizeComboBox->setCurrentIndex(3);
+            break;
+        case 12:
+            sizeComboBox->setCurrentIndex(4);
+            break;
+        case 14:
+            sizeComboBox->setCurrentIndex(5);
+            break;
+        case 16:
+            sizeComboBox->setCurrentIndex(6);
+            break;
+        case 18:
+            sizeComboBox->setCurrentIndex(7);
+            break;
+        case 20:
+            sizeComboBox->setCurrentIndex(8);
+            break;
+        case 22:
+            sizeComboBox->setCurrentIndex(9);
+            break;
+        }
         break;
     default:
         color = "black";
@@ -644,6 +708,8 @@ void textWidget::show(){
 void textWidget::onComboBoxTextChanged(const QString& text){
     QGraphicsItem* focusedItem = screenshotView::getInstance()->getScene()->focusItem();
     myTextItem* focusedTextItem = qgraphicsitem_cast<myTextItem*>(focusedItem);
+    myNumberItem* focusedNumberItem = qgraphicsitem_cast<myNumberItem*>(focusedItem);
+    myNumberTextItem* focusedNumberTextItem = qgraphicsitem_cast<myNumberTextItem*>(focusedItem);
     QFont font;
     font.setPointSize(text.toInt());
     switch (type) {
@@ -654,6 +720,12 @@ void textWidget::onComboBoxTextChanged(const QString& text){
         settings->setTextSize(text.toInt());
         break;
     case textWidgetType::serial:
+        if(focusedNumberItem){
+            focusedNumberItem->text->setFont(font);
+        }else if(focusedNumberTextItem){
+            focusedNumberTextItem->setFont(font);
+        }
+        settings->setNumberSize(text.toInt());
         break;
     }
 }

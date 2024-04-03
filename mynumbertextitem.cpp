@@ -10,7 +10,7 @@ myNumberTextItem::myNumberTextItem()
     connect(document(),&QTextDocument::contentsChanged,this,&myNumberTextItem::adjustTextWidth);
 
     QFont font;
-    font.setPointSize(16);
+    font.setPointSize(screenshotView::getInstance()->getControl()->myTextWidget->settings->getNumberSize());
     this->setFont(font);
 }
 

@@ -24,11 +24,11 @@ public:
 
 private:
     //文字item
-    int textSize = 8;
+    int textSize = 14;
     QColor textColor = Qt::black;
 
     //序号item
-    int numberSize = 8;
+    int numberSize = 14;
     QColor numberColor = Qt::black;
 };
 
