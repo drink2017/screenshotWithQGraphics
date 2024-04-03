@@ -55,6 +55,27 @@ void myNumberItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void myNumberItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseMoveEvent(event);
+
+    QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+    QRectF groupRect = this->mapToScene(this->boundingRect()).boundingRect();
+    QRectF textRect = this->text->mapToScene(this->text->boundingRect()).boundingRect();
+    if(groupRect.left() < selectRect.left() && groupRect.top() < selectRect.top()){
+        setPos(selectRect.topLeft()-boundingRect().topLeft());
+    }else if(groupRect.left() < selectRect.left() && textRect.bottom() > selectRect.bottom()){
+        setPos(QPointF(selectRect.x()-boundingRect().left(),selectRect.y()+selectRect.height()-textRect.height()-boundingRect().top()));
+    }else if(textRect.right() > selectRect.right() && groupRect.top() < selectRect.top()){
+        setPos(QPointF(selectRect.right()-(textRect.left()-groupRect.left()+textRect.width()+boundingRect().left()),selectRect.top()-boundingRect().top()));
+    }else if(textRect.right() > selectRect.right() && textRect.bottom() > selectRect.bottom()){
+        setPos(QPointF(selectRect.right()-(textRect.left()-groupRect.left()+textRect.width()+boundingRect().left()),selectRect.bottom()-textRect.height()-boundingRect().top()));
+    }else if(groupRect.left() < selectRect.left()){
+        setX(selectRect.x()-boundingRect().left());
+    }else if(groupRect.top() < selectRect.top()){
+        setY(selectRect.top()-boundingRect().top());
+    }else if(textRect.right() > selectRect.right()){
+        setX(selectRect.right()-(textRect.left()-groupRect.left()+textRect.width()+boundingRect().left()));
+    }else if(textRect.bottom() > selectRect.bottom()){
+        setY(selectRect.bottom()-textRect.height()-boundingRect().top());
+    }
 }
 
 void myNumberItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -62,21 +83,3 @@ void myNumberItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mouseReleaseEvent(event);
     commandManager::getInstance()->setEditingItem(false);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

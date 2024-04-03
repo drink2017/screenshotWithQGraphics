@@ -101,7 +101,7 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
     }
     QGraphicsItem* focusedItem = scene->focusItem();
     focusOnText = qgraphicsitem_cast<myTextItem*>(focusedItem);
-    focusOnNumber = qgraphicsitem_cast<QGraphicsTextItem*>(focusedItem);
+    focusOnNumber = qgraphicsitem_cast<myNumberItem*>(focusedItem) || qgraphicsitem_cast<myNumberTextItem*>(focusedItem);
     QGraphicsView::mousePressEvent(event);
 }
 

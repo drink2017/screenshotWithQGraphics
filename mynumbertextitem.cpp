@@ -1,16 +1,17 @@
 #include "mynumbertextitem.h"
-#include "screenshotview.h"
 #include "commandmanager.h"
-
-#include <QDebug>
-
 #include "QTextDocument"
+#include "screenshotview.h"
 
 myNumberTextItem::myNumberTextItem()
 {
     setFlags(ItemIsMovable | ItemIsSelectable);
     setTextInteractionFlags(Qt::TextEditorInteraction);
     connect(document(),&QTextDocument::contentsChanged,this,&myNumberTextItem::adjustTextWidth);
+
+    QFont font;
+    font.setPointSize(16);
+    this->setFont(font);
 }
 
 void myNumberTextItem::adjustTextWidth(){
