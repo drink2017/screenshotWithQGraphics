@@ -6,6 +6,8 @@
 #include "myarrowitem.h"
 #include "mypenitem.h"
 #include "mytextitem.h"
+#include "mynumberitem.h"
+#include "mynumbertextitem.h"
 #include "undomanager.h"
 #include "redomanager.h"
 
@@ -134,6 +136,7 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         commandManager::getInstance()->disableDrawArrow();
         commandManager::getInstance()->disableDrawPen();
         commandManager::getInstance()->disableDrawText();
+        commandManager::getInstance()->disableDrawNumber();
         isChaningArea = true;
 
         QList<myRectItem*> editedRectItems;
@@ -177,6 +180,24 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             if(myTextItem* editedTextItem = dynamic_cast<myTextItem*>(item)){
                 if(editedTextItem->flags() & QGraphicsItem::ItemIsMovable){
                     editedTextItems.append(editedTextItem);
+                }
+            }
+        }
+
+        QList<myNumberItem*> editedNumberItems;
+        foreach(QGraphicsItem* item,this->scene()->items()){
+            if(myNumberItem* editedNumberItem = dynamic_cast<myNumberItem*>(item)){
+                if(editedNumberItem->flags() & QGraphicsItem::ItemIsMovable){
+                    editedNumberItems.append(editedNumberItem);
+                }
+            }
+        }
+
+        QList<myNumberTextItem*> editedNumberTextItems;
+        foreach(QGraphicsItem* item,this->scene()->items()){
+            if(myNumberTextItem* editedNumberTextItem = dynamic_cast<myNumberTextItem*>(item)){
+                if(editedNumberTextItem->flags() & QGraphicsItem::ItemIsMovable){
+                    editedNumberTextItems.append(editedNumberTextItem);
                 }
             }
         }
@@ -266,6 +287,40 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 }
                 if(textRect.bottom() > maxY){
                     maxY = textRect.bottom();
+                }
+            }
+        }
+        if(!editedNumberItems.isEmpty()){
+            foreach(myNumberItem* editedNumberItem,editedNumberItems){
+                QRectF numberRect = editedNumberItem->mapToScene(editedNumberItem->boundingRect()).boundingRect();
+                if(numberRect.x() < minX){
+                    minX = numberRect.x();
+                }
+                if(numberRect.y() < minY){
+                    minY = numberRect.y();
+                }
+                if((numberRect.x()+numberRect.width()) > maxX){
+                    maxX = numberRect.x()+numberRect.width();
+                }
+                if((numberRect.y()+numberRect.height()) > maxY){
+                    maxY = numberRect.y() + numberRect.height();
+                }
+            }
+        }
+        if(!editedNumberTextItems.isEmpty()){
+            foreach(myNumberTextItem* editedNumberTextItem,editedNumberTextItems){
+                QRectF numberTextRect = editedNumberTextItem->mapToScene(editedNumberTextItem->boundingRect()).boundingRect();
+                if(numberTextRect.x() < minX){
+                    minX = numberTextRect.x();
+                }
+                if(numberTextRect.y() < minY){
+                    minY = numberTextRect.y();
+                }
+                if((numberTextRect.x()+numberTextRect.width()) > maxX){
+                    maxX = numberTextRect.x()+numberTextRect.width();
+                }
+                if((numberTextRect.y()+numberTextRect.height()) > maxY){
+                    maxY = numberTextRect.y() + numberTextRect.height();
                 }
             }
         }

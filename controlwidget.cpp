@@ -584,6 +584,11 @@ void controlWidget::updateButtonStatu(){
     }else{
         pTextButton->setChecked(false);
     }
+    if(commandManager::getInstance()->isDrawingNumber()){
+        pSerialButton->setChecked(true);
+    }else{
+        pSerialButton->setChecked(false);
+    }
 }
 
 
