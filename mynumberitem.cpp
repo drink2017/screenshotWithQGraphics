@@ -1,6 +1,9 @@
 #include "mynumberitem.h"
 #include "screenshotview.h"
 #include "commandmanager.h"
+#include "order.h"
+#include "undomanager.h"
+#include "redomanager.h"
 
 #include <QFont>
 #include <QDebug>
@@ -50,6 +53,13 @@ void myNumberItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     commandManager::getInstance()->setEditingItem(true);
     QGraphicsItem::mousePressEvent(event);
+
+    myNumberItem* moveBeforeItem = new myNumberItem(this->serial->text().toInt());
+    moveBeforeItem->setPos(this->pos());
+    moveBeforeItem->text->setPlainText(this->text->toPlainText());
+    order* moveOrder = new order();
+    moveOrder->addToDeleteItem(moveBeforeItem);
+    undoManager::getInstance()->pushOrder(moveOrder);
 }
 
 void myNumberItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -82,4 +92,17 @@ void myNumberItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
     commandManager::getInstance()->setEditingItem(false);
+
+    order* moveOrder = undoManager::getInstance()->popOrder();
+    myNumberItem* moveBeforeItem = dynamic_cast<myNumberItem*>(moveOrder->getDeleteItem().back());
+
+    if(this->pos() == moveBeforeItem->pos()){
+        QQueue<QGraphicsItem*> deleteItem = moveOrder->getDeleteItem();
+        delete deleteItem.back();
+        delete moveOrder;
+    }else{
+        moveOrder->addToAddItem(this);
+        undoManager::getInstance()->pushOrder(moveOrder);
+        redoManager::getInstance()->clear();
+    }
 }

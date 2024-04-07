@@ -6,6 +6,7 @@
 #include "myellipseitem.h"
 #include "mypenitem.h"
 #include "mytextitem.h"
+#include "mynumberitem.h"
 
 #include <commandmanager.h>
 #include <QGuiApplication>
@@ -384,6 +385,9 @@ void controlWidget::undo(){
             undoOrder->clearAddItem();
             undoOrder->addToDeleteItem(item);
             myRedoManager->pushOrder(undoOrder);
+            if(typeid (*item) == typeid (myNumberItem)){
+                commandManager::getInstance()->number--;
+            }
         }else if(!addItem.isEmpty() && !deleteItem.isEmpty()){
             auto& itemHasDeleted = *(deleteItem.back());
             if(typeid (itemHasDeleted) == typeid (myRectItem)){
@@ -458,6 +462,17 @@ void controlWidget::undo(){
                 undoOrder->addToAddItem(afterMoveItem);
                 undoOrder->addToDeleteItem(beforeMoveItem);
                 myRedoManager->pushOrder(undoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myNumberItem)){
+                myNumberItem* beforeMoveItem = dynamic_cast<myNumberItem*>(deleteItem.back());
+                myNumberItem* afterMoveItem = dynamic_cast<myNumberItem*>(addItem.back());
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                beforeMoveItem->setPos(afterMovePos);
+                undoOrder->clearAddItem();
+                undoOrder->clearDeleteItem();
+                undoOrder->addToAddItem(afterMoveItem);
+                undoOrder->addToDeleteItem(beforeMoveItem);
+                myRedoManager->pushOrder(undoOrder);
             }
         }
     }
@@ -478,6 +493,9 @@ void controlWidget::redo(){
             redoOrder->clearDeleteItem();
             redoOrder->addToAddItem(item);
             myUndoManager->pushOrder(redoOrder);
+            if(typeid(*item) == typeid (myNumberItem)){
+                commandManager::getInstance()->number++;
+            }
         }else if(!addItem.isEmpty() && !deleteItem.isEmpty()){
             auto& itemHasDeleted = *(deleteItem.back());
             if(typeid (itemHasDeleted) == typeid (myRectItem)){
@@ -541,6 +559,17 @@ void controlWidget::redo(){
             }else if(typeid (itemHasDeleted) == typeid (myTextItem)){
                 myTextItem* beforeMoveItem = dynamic_cast<myTextItem*>(deleteItem.back());
                 myTextItem* afterMoveItem = dynamic_cast<myTextItem*>(addItem.back());
+                QPointF afterMovePos = afterMoveItem->pos();
+                afterMoveItem->setPos(beforeMoveItem->pos());
+                beforeMoveItem->setPos(afterMovePos);
+                redoOrder->clearAddItem();
+                redoOrder->clearDeleteItem();
+                redoOrder->addToAddItem(afterMoveItem);
+                redoOrder->addToDeleteItem(beforeMoveItem);
+                myUndoManager->pushOrder(redoOrder);
+            }else if(typeid (itemHasDeleted) == typeid (myNumberItem)){
+                myNumberItem* beforeMoveItem = dynamic_cast<myNumberItem*>(deleteItem.back());
+                myNumberItem* afterMoveItem = dynamic_cast<myNumberItem*>(addItem.back());
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 beforeMoveItem->setPos(afterMovePos);

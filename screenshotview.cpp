@@ -279,6 +279,13 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
         state->number++;
         currentNumberItem->setPos(event->pos());
         scene->addItem(currentNumberItem);
+
+        order* addOrder = new order();
+        addOrder->addToAddItem(currentNumberItem);
+        undoManager* myUndoManager = undoManager::getInstance();
+        redoManager* myRedoManager = redoManager::getInstance();
+        myUndoManager->pushOrder(addOrder);
+        myRedoManager->clear();
     }
     QGraphicsView::mouseReleaseEvent(event);
 }
