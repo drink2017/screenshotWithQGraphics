@@ -1,13 +1,14 @@
 #include "screenshotview.h"
 #include "commandmanager.h"
-#include "order.h"
-#include "undomanager.h"
-#include "redomanager.h"
-#include "myrectitem.h"
-#include "myellipseitem.h"
-#include "mypenitem.h"
 #include "mytextitem.h"
 #include "mynumberitem.h"
+#include "selectcommand.h"
+#include "rectcommand.h"
+#include "ellipsecommand.h"
+#include "arrowcommand.h"
+#include "pencommand.h"
+#include "textcommand.h"
+#include "numbercommand.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -47,57 +48,24 @@ void screenshotView::mousePressEvent(QMouseEvent *event)
 {
     commandManager* state = commandManager::getInstance();
     if(state->isSelectingArea() && event->button() == Qt::LeftButton){
-        selectStart = event->pos();
-        selectEnd = event->pos();
-        currentSelectItem = new selectItem();
-        currentSelectItem->setPath(getShadowPath(selectStart,selectEnd));
-        scene->addItem(currentSelectItem);
-
-        info = new infoLabel();
-        info->show();
+        pCommand = new selectCommand();
+        pCommand->mousePressCommand(event);
     }
     if(state->isDrawingRect() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        commandManager::getInstance()->drawRectStart = event->pos();
-        commandManager::getInstance()->rectPen.setColor(control->myColorWidget->settings->getRectColor());
-        commandManager::getInstance()->rectPen.setWidth(control->myColorWidget->settings->getRectWidth());
-        currentRectItem->setPen(commandManager::getInstance()->rectPen);
+        pCommand = new rectCommand();
+        pCommand->mousePressCommand(event);
     }
     if(state->isDrawingEllipse() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        commandManager::getInstance()->drawEllipseStart = event->pos();
-        commandManager::getInstance()->ellipsePen.setColor(control->myColorWidget->settings->getEllipseColor());
-        commandManager::getInstance()->ellipsePen.setWidth(control->myColorWidget->settings->getEllipseWidth());
-        currentEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
+        pCommand = new ellipseCommand();
+        pCommand->mousePressCommand(event);
     }
     if(state->isDrawingArrow() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        if(!QRect(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).contains(event->pos())){
-            QPoint start(event->pos());
-            QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
-            if(event->pos().x() < selectRect.left()){
-                start.setX(selectRect.left());
-            }else if(event->pos().x() > selectRect.right()){
-                start.setX(selectRect.right());
-            }
-            if(event->pos().y() < selectRect.top()){
-                start.setY(selectRect.top());
-            }else if(event->pos().y() > selectRect.bottom()){
-                start.setY(selectRect.bottom());
-            }
-            commandManager::getInstance()->drawArrowStart = start;
-        }else{
-            commandManager::getInstance()->drawArrowStart = event->pos();
-        }
-        commandManager::getInstance()->drawArrowEnd = event->pos();
-        commandManager::getInstance()->arrowPen.setColor(control->myColorWidget->settings->getArrowColor());
-        commandManager::getInstance()->arrowPen.setWidth(control->myColorWidget->settings->getArrowWidth());
-        currentArrowItem->setPen(commandManager::getInstance()->arrowPen);
+        pCommand = new arrowCommand();
+        pCommand->mousePressCommand(event);
     }
     if(state->isDrawingPen() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        QPainterPath path = currentPenItem->path();
-        path.moveTo(event->pos());
-        currentPenItem->setPath(path);
-        commandManager::getInstance()->penPen.setColor(control->myColorWidget->settings->getPenColor());
-        commandManager::getInstance()->penPen.setWidth(control->myColorWidget->settings->getPenWidth());
-        currentPenItem->setPen(commandManager::getInstance()->penPen);
+        pCommand = new penCommand();
+        pCommand->mousePressCommand(event);
     }
     QGraphicsItem* focusedItem = scene->focusItem();
     focusOnText = qgraphicsitem_cast<myTextItem*>(focusedItem);
@@ -109,60 +77,19 @@ void screenshotView::mouseMoveEvent(QMouseEvent *event)
 {
     commandManager* state = commandManager::getInstance();
     if(state->isSelectingArea() && event->buttons() == Qt::LeftButton){
-        selectEnd = event->pos();
-        currentSelectItem->setPath(getShadowPath(selectStart,selectEnd));
-        currentSelectItem->updateRectHandles();
-
-        info->updateInfoLabel();
+        pCommand->mouseMoveCommand(event);
     }
     if(state->isDrawingRect() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
-        currentRectItem->setRect(QRectF(commandManager::getInstance()->drawRectStart,event->pos()).normalized());
+        pCommand->mouseMoveCommand(event);
     }
     if(state->isDrawingEllipse() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
-        currentEllipseItem->setRect(QRectF(commandManager::getInstance()->drawEllipseStart,event->pos()).normalized());
+        pCommand->mouseMoveCommand(event);
     }
     if(state->isDrawingArrow() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
-        currentArrowItem->setStart(commandManager::getInstance()->drawArrowStart);
-
-        QPoint end = event->pos();
-        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
-        if(event->pos().x() < selectRect.left()){
-            end.setX(selectRect.left());
-        }else if(event->pos().x() > selectRect.right()){
-            end.setX(selectRect.right());
-        }
-        if(event->pos().y() < selectRect.top()){
-            end.setY(selectRect.top());
-        }else if(event->pos().y() > selectRect.bottom()){
-            end.setY(selectRect.bottom());
-        }
-
-        currentArrowItem->setEnd(end);
+        pCommand->mouseMoveCommand(event);
     }
     if(state->isDrawingPen() && event->buttons() == Qt::LeftButton && !state->isEditingItem()){
-        QPainterPath path = currentPenItem->path();
-
-        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
-        if(event->pos().x() < selectRect.left() && event->pos().y() < selectRect.top()){
-            path.lineTo(QPointF(selectRect.left(),selectRect.top()));
-        }else if(event->pos().x() < selectRect.left() && event->pos().y() > selectRect.bottom()){
-            path.lineTo(QPointF(selectRect.left(),selectRect.bottom()));
-        }else if(event->pos().x() > selectRect.right() && event->pos().y() < selectRect.top()){
-            path.lineTo(QPointF(selectRect.right(),selectRect.top()));
-        }else if(event->pos().x() > selectRect.right() && event->pos().y() > selectRect.bottom()){
-            path.lineTo(QPointF(selectRect.right(),selectRect.bottom()));
-        }else if(event->pos().x() < selectRect.left()){
-            path.lineTo(QPointF(selectRect.left(),event->pos().y()));
-        }else if(event->pos().y() < selectRect.top()){
-            path.lineTo(QPointF(event->pos().x(),selectRect.top()));
-        }else if(event->pos().x() > selectRect.right()){
-            path.lineTo(QPointF(selectRect.right(),event->pos().y()));
-        }else if(event->pos().y() > selectRect.bottom()){
-            path.lineTo(QPointF(event->pos().x(),selectRect.bottom()));
-        }else{
-            path.lineTo(QPointF(event->pos().x(),event->pos().y()));
-        }
-        currentPenItem->setPath(path);
+        pCommand->mouseMoveCommand(event);
     }
     QGraphicsView::mouseMoveEvent(event);
 }
@@ -171,121 +98,34 @@ void screenshotView::mouseReleaseEvent(QMouseEvent *event)
 {
     commandManager* state = commandManager::getInstance();
     if(state->isSelectingArea() && event->button() == Qt::LeftButton){
-        currentSelectItem->setHover(true);
-        currentSelectItem->setFinishSelect();
-        commandManager::getInstance()->setSelectingArea(false);
-        control = new controlWidget();
-        commandManager::getInstance()->connectToControlWidget();
-        control->show();
+        pCommand->mouseReleaseCommand(event);
+        delete pCommand;
     }
     if(state->isDrawingRect() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        commandManager::getInstance()->drawRectEnd = event->pos();
-        if(event->pos() == commandManager::getInstance()->drawRectStart){
-            return;
-        }
-        myRectItem* newRectItem = new myRectItem(QRectF(selectStart,selectEnd).intersected(currentRectItem->rect()));
-        newRectItem->setPen(commandManager::getInstance()->rectPen);
-        newRectItem->setNowRect(newRectItem->rect());
-        scene->addItem(newRectItem);
-        currentRectItem->setRect(QRectF());
-
-        order* addOrder = new order();
-        addOrder->addToAddItem(newRectItem);
-        undoManager* myUndoManager = undoManager::getInstance();
-        redoManager* myRedoManager = redoManager::getInstance();
-        myUndoManager->pushOrder(addOrder);
-        myRedoManager->clear();
+        pCommand->mouseReleaseCommand(event);
+        delete pCommand;
     }
     if(state->isDrawingEllipse() && event->button() == Qt::LeftButton && !state->isEditingItem()){   
-        commandManager::getInstance()->drawEllipseEnd = event->pos();
-        if(event->pos() == commandManager::getInstance()->drawEllipseStart){
-            return;
-        }
-        myEllipseItem* newEllipseItem = new myEllipseItem(QRectF(selectStart,selectEnd).intersected(currentEllipseItem->rect()));
-        newEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
-        newEllipseItem->setNowRect(newEllipseItem->rect());
-        scene->addItem(newEllipseItem);
-        currentEllipseItem->setRect(QRectF());
-
-        order* addOrder = new order();
-        addOrder->addToAddItem(newEllipseItem);
-        undoManager* myUndoManager = undoManager::getInstance();
-        redoManager* myRedoManager = redoManager::getInstance();
-        myUndoManager->pushOrder(addOrder);
-        myRedoManager->clear();
+        pCommand->mouseReleaseCommand(event);
+        delete pCommand;
     }
     if(state->isDrawingArrow() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        QPoint end = event->pos();
-        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
-        if(event->pos().x() < selectRect.left()){
-            end.setX(selectRect.left());
-        }else if(event->pos().x() > selectRect.right()){
-            end.setX(selectRect.right());
-        }
-        if(event->pos().y() < selectRect.top()){
-            end.setY(selectRect.top());
-        }else if(event->pos().y() > selectRect.bottom()){
-            end.setY(selectRect.bottom());
-        }
-        if(end == commandManager::getInstance()->drawArrowStart){
-            return;
-        }
-        commandManager::getInstance()->drawArrowEnd = end;
-        myArrowItem* newArrowItem = new myArrowItem(commandManager::getInstance()->drawArrowStart,commandManager::getInstance()->drawArrowEnd);
-        newArrowItem->setPen(commandManager::getInstance()->arrowPen);
-        scene->addItem(newArrowItem);
-        currentArrowItem->setStart(QPoint());
-        currentArrowItem->setEnd(QPoint());
-
-        order* addOrder = new order();
-        addOrder->addToAddItem(newArrowItem);
-        undoManager* myUndoManager = undoManager::getInstance();
-        redoManager* myRedoManager = redoManager::getInstance();
-        myUndoManager->pushOrder(addOrder);
-        myRedoManager->clear();
+        pCommand->mouseReleaseCommand(event);
+        delete pCommand;
     }
     if(state->isDrawingPen() && event->button() == Qt::LeftButton && !state->isEditingItem()){
-        myPenItem* newPenItem = new myPenItem(currentPenItem->path());
-        newPenItem->setPen(currentPenItem->pen());
-        scene->addItem(newPenItem);
-        currentPenItem->setPath(QPainterPath());
-
-        order* addOrder = new order();
-        addOrder->addToAddItem(newPenItem);
-        undoManager* myUndoManager = undoManager::getInstance();
-        redoManager* myRedoManager = redoManager::getInstance();
-        myUndoManager->pushOrder(addOrder);
-        myRedoManager->clear();
+        pCommand->mouseReleaseCommand(event);
+        delete pCommand;
     }
     if(state->isDrawingText() && event->button() == Qt::LeftButton && !state->isEditingItem() && !focusOnText){
-        myTextItem* currentTextItem = new myTextItem();
-        currentTextItem->setPos(event->pos());
-        currentTextItem->setDefaultTextColor(screenshotView::getInstance()->getControl()->myTextWidget->settings->getTextColor());
-        QFont font;
-        font.setPointSize(screenshotView::getInstance()->getControl()->myTextWidget->settings->getTextSize());
-        currentTextItem->setFont(font);
-        scene->addItem(currentTextItem);
-        currentTextItem->setFocus();
-
-        order* addOrder = new order();
-        addOrder->addToAddItem(currentTextItem);
-        undoManager* myUndoManager = undoManager::getInstance();
-        redoManager* myRedoManager = redoManager::getInstance();
-        myUndoManager->pushOrder(addOrder);
-        myRedoManager->clear();
+        pCommand = new textCommand();
+        pCommand->mouseReleaseCommand(event);
+        delete pCommand;
     }
     if(state->isDrawingNumber() && event->button() == Qt::LeftButton && !state->isEditingItem() && !focusOnNumber){
-        myNumberItem* currentNumberItem = new myNumberItem(state->number);
-        state->number++;
-        currentNumberItem->setPos(event->pos());
-        scene->addItem(currentNumberItem);
-
-        order* addOrder = new order();
-        addOrder->addToAddItem(currentNumberItem);
-        undoManager* myUndoManager = undoManager::getInstance();
-        redoManager* myRedoManager = redoManager::getInstance();
-        myUndoManager->pushOrder(addOrder);
-        myRedoManager->clear();
+        pCommand = new numberCommand();
+        pCommand->mouseReleaseCommand(event);
+        delete pCommand;
     }
     QGraphicsView::mouseReleaseEvent(event);
 }
@@ -333,7 +173,37 @@ QGraphicsScene* screenshotView::getScene(){
     return scene;
 }
 
+void screenshotView::setCurrentSelectItem(selectItem *selectArea){
+    currentSelectItem = selectArea;
+}
 
+selectItem* screenshotView::getCurrentSelectItem(){
+    return currentSelectItem;
+}
+
+void screenshotView::setInfo(infoLabel *info){
+    this->info = info;
+}
+
+void screenshotView::setControl(controlWidget *control){
+    this->control = control;
+}
+
+QGraphicsRectItem* screenshotView::getCurrentRectItem(){
+    return currentRectItem;
+}
+
+QGraphicsEllipseItem* screenshotView::getCurrentEllipseItem(){
+    return currentEllipseItem;
+}
+
+myArrowItem* screenshotView::getCurrentArrowItem(){
+    return currentArrowItem;
+}
+
+QGraphicsPathItem* screenshotView::getCurrentPenItem(){
+    return currentPenItem;
+}
 
 
 

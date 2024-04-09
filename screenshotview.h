@@ -5,6 +5,7 @@
 #include "infolabel.h"
 #include "controlwidget.h"
 #include "myarrowitem.h"
+#include "command.h"
 
 #include <QGraphicsView>
 
@@ -16,12 +17,25 @@ public:
 
     QPoint getSelectStart();
     QPoint getSelectEnd();
+
     controlWidget* getControl();
+    void setControl(controlWidget* control);
+
     infoLabel* getInfo();
+    void setInfo(infoLabel* info);
+
     QGraphicsScene* getScene();
 
     void setSelectStart(QPointF selectStart);
     void setSelectEnd(QPointF selectEnd);
+    QPainterPath getShadowPath(QPoint selectStart,QPoint selectEnd);
+
+    void setCurrentSelectItem(selectItem* selectArea);
+    selectItem* getCurrentSelectItem();
+    QGraphicsRectItem* getCurrentRectItem();
+    QGraphicsEllipseItem* getCurrentEllipseItem();
+    myArrowItem* getCurrentArrowItem();
+    QGraphicsPathItem* getCurrentPenItem();
 
 private:
     static screenshotView* instance;
@@ -35,7 +49,6 @@ private:
     //选择区域
     QPoint selectStart;
     QPoint selectEnd;
-    QPainterPath getShadowPath(QPoint selectStart,QPoint selectEnd);
     selectItem* currentSelectItem;
 
     //显示尺寸区域
@@ -52,6 +65,8 @@ private:
 
     bool focusOnText;
     bool focusOnNumber;
+
+    command* pCommand;
 
     // QWidget interface
 protected:

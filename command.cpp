@@ -5,3 +5,7 @@ command::command()
 
 
 }
+
+command::~command(){
+
+}

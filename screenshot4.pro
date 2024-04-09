@@ -16,10 +16,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    arrowcommand.cpp \
     colorwidget.cpp \
     command.cpp \
     commandmanager.cpp \
     controlwidget.cpp \
+    ellipsecommand.cpp \
     infolabel.cpp \
     main.cpp \
     myarrowitem.cpp \
@@ -29,20 +31,27 @@ SOURCES += \
     mypenitem.cpp \
     myrectitem.cpp \
     mytextitem.cpp \
+    numbercommand.cpp \
     order.cpp \
+    pencommand.cpp \
+    rectcommand.cpp \
     redomanager.cpp \
     screenshotview.cpp \
+    selectcommand.cpp \
     selectitem.cpp \
     settings.cpp \
+    textcommand.cpp \
     textsettings.cpp \
     textwidget.cpp \
     undomanager.cpp
 
 HEADERS += \
+    arrowcommand.h \
     colorwidget.h \
     command.h \
     commandmanager.h \
     controlwidget.h \
+    ellipsecommand.h \
     infolabel.h \
     myarrowitem.h \
     myellipseitem.h \
@@ -51,11 +60,16 @@ HEADERS += \
     mypenitem.h \
     myrectitem.h \
     mytextitem.h \
+    numbercommand.h \
     order.h \
+    pencommand.h \
+    rectcommand.h \
     redomanager.h \
     screenshotview.h \
+    selectcommand.h \
     selectitem.h \
     settings.h \
+    textcommand.h \
     textsettings.h \
     textwidget.h \
     undomanager.h

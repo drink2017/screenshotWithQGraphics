@@ -331,7 +331,6 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void selectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(finishSelect){
-        //undoManager::getInstance()->clear();
         redoManager::getInstance()->clear();
         screenshotView::getInstance()->getControl()->updateButtonStatu();
         QPoint oldSelectStart = screenshotView::getInstance()->getSelectStart();
