@@ -123,65 +123,70 @@ void myEllipseItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void myEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    QRectF selectRect = mapFromScene(QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd())).boundingRect();
     if(this->isSelected() && type == ellipse_rect_no){
         QGraphicsEllipseItem::mouseMoveEvent(event);
+        QRectF sceneRect = this->mapToScene(this->rect()).boundingRect();
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
+        if(sceneRect.left() < selectRect.left() && sceneRect.top() < selectRect.top()){
+            QRectF rect = this->rect();
+            rect.translate(selectRect.left() - sceneRect.left(),selectRect.top() < sceneRect.top());
+            setRect(rect);
+        }else if(sceneRect.left() < selectRect.left() && sceneRect.bottom() > selectRect.bottom()){
+            QRectF rect = this->rect();
+            rect.translate(selectRect.left()-sceneRect.left(),selectRect.bottom()-sceneRect.bottom());
+            setRect(rect);
+        }else if(sceneRect.right() > selectRect.right() && sceneRect.top() < selectRect.top()){
+            QRectF rect = this->rect();
+            rect.translate(selectRect.right()-sceneRect.right(),selectRect.top()-sceneRect.top());
+            setRect(rect);
+        }else if(sceneRect.right() > selectRect.right() && sceneRect.bottom() > selectRect.bottom()){
+            QRectF rect = this->rect();
+            rect.translate(selectRect.right() - sceneRect.right(),selectRect.bottom() - sceneRect.bottom());
+            setRect(rect);
+        }else if(sceneRect.left() < selectRect.left()){
+            QRectF rect = this->rect();
+            rect.translate(selectRect.left()-sceneRect.left(),0);
+            setRect(rect);
+        }else if(sceneRect.top() < selectRect.top()){
+            QRectF rect = this->rect();
+            rect.translate(0,selectRect.top()-sceneRect.top());
+            setRect(rect);
+        }else if(sceneRect.right() > selectRect.right()){
+            QRectF rect = this->rect();
+            rect.translate(selectRect.right()-sceneRect.right(),0);
+            setRect(rect);
+        }else if(sceneRect.bottom() > selectRect.bottom()){
+            QRectF rect = this->rect();
+            rect.translate(0,selectRect.bottom()-sceneRect.bottom());
+            setRect(rect);
+        }
     }
     if(type == ellipse_rect_top){
         setCursor(Qt::SizeVerCursor);
         QRectF now = QRectF(QPointF(before.left(),event->pos().y()),before.bottomRight()).normalized();
-        this->setRect(now);
-        updateEllipseHandles();
+        this->setRect(now.intersected(selectRect));
     }else if(type == ellipse_rect_right){
         setCursor(Qt::SizeHorCursor);
         QRectF now = QRectF(before.topLeft(),QPointF(event->pos().x(),before.bottom())).normalized();
-        this->setRect(now);
-        updateEllipseHandles();
+        this->setRect(now.intersected(selectRect));
     }else if(type == ellipse_rect_bottom){
         setCursor(Qt::SizeVerCursor);
         QRectF now = QRectF(before.topLeft(),QPointF(before.right(),event->pos().y())).normalized();
-        this->setRect(now);
-        updateEllipseHandles();
+        this->setRect(now.intersected(selectRect));
     }else if(type == ellipse_rect_left){
         setCursor(Qt::SizeHorCursor);
         QRectF now = QRectF(QPointF(event->pos().x(),before.top()),before.bottomRight()).normalized();
-        this->setRect(now);
-        updateEllipseHandles();
+        this->setRect(now.intersected(selectRect));
     }
+    updateEllipseHandles();
 }
 
 void myEllipseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     setCursor(Qt::ArrowCursor);
     if(this->isSelected()){
-        QGraphicsEllipseItem::mouseReleaseEvent(event);        
-        QRectF sceneRect = this->mapToScene(this->boundingRect()).boundingRect();
-        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
-        if(sceneRect.left() < selectRect.x()){
-            this->setX(selectRect.x() - this->rect().x());
-            sceneRect.translate(selectRect.x() - sceneRect.x(),0);
-            setNowRect(sceneRect);
-        }
-        if(sceneRect.top() < selectRect.top()){
-            this->setY(selectRect.y() - this->rect().y());
-            sceneRect.translate(0,selectRect.y() - sceneRect.top());
-            setNowRect(sceneRect);
-        }
-        if(sceneRect.right() > selectRect.right()){
-            this->setX(selectRect.right() - this->rect().right());
-            sceneRect.translate(selectRect.right() - sceneRect.right(),0);
-            setNowRect(sceneRect);
-        }
-        if(sceneRect.bottom() > selectRect.bottom()){
-            this->setY(selectRect.bottom() - this->rect().bottom());
-            sceneRect.translate(0,selectRect.bottom() - sceneRect.bottom());
-            setNowRect(sceneRect);
-        }
-        if(sceneRect.left() > selectRect.x() &&
-           sceneRect.top() > selectRect.top() &&
-           sceneRect.right() < selectRect.right() &&
-           sceneRect.bottom() < selectRect.bottom()){
-           setNowRect(sceneRect);
-        }
+        QGraphicsEllipseItem::mouseReleaseEvent(event);
         commandManager::getInstance()->setEditingItem(false);
 
         order* moveOrder = undoManager::getInstance()->popOrder();

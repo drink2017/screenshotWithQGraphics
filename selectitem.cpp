@@ -209,33 +209,35 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         if(!editedRectItems.isEmpty()){
             foreach(myRectItem* editedRectItem,editedRectItems){
-                if(editedRectItem->getNowRect().x() < minX){
-                    minX = editedRectItem->getNowRect().x();
+                QRectF editedRectItemRect = editedRectItem->mapToScene(editedRectItem->boundingRect()).boundingRect();
+                if(editedRectItemRect.x() < minX){
+                    minX = editedRectItemRect.x();
                 }
-                if(editedRectItem->getNowRect().y() < minY){
-                    minY = editedRectItem->getNowRect().y();
+                if(editedRectItemRect.y() < minY){
+                    minY = editedRectItemRect.y();
                 }
-                if((editedRectItem->getNowRect().x()+editedRectItem->getNowRect().width()) > maxX){
-                    maxX = editedRectItem->getNowRect().x()+editedRectItem->getNowRect().width();
+                if(editedRectItemRect.right() > maxX){
+                    maxX = editedRectItemRect.right();
                 }
-                if((editedRectItem->getNowRect().y()+editedRectItem->getNowRect().height()) > maxY){
-                    maxY = editedRectItem->getNowRect().y()+editedRectItem->getNowRect().height();
+                if(editedRectItemRect.bottom() > maxY){
+                    maxY = editedRectItemRect.bottom();
                 }
             }
         }
         if(!editedEllipseItems.isEmpty()){
             foreach(myEllipseItem* editedEllipseItem,editedEllipseItems){
-                if(editedEllipseItem->getNowRect().x() < minX){
-                    minX = editedEllipseItem->getNowRect().x();
+                QRectF editedEllipseItemRect = editedEllipseItem->mapToScene(editedEllipseItem->boundingRect()).boundingRect();
+                if(editedEllipseItemRect.x() < minX){
+                    minX = editedEllipseItemRect.x();
                 }
-                if(editedEllipseItem->getNowRect().y() < minY){
-                    minY = editedEllipseItem->getNowRect().y();
+                if(editedEllipseItemRect.y() < minY){
+                    minY = editedEllipseItemRect.y();
                 }
-                if((editedEllipseItem->getNowRect().x()+editedEllipseItem->getNowRect().width()) > maxX){
-                    maxX = editedEllipseItem->getNowRect().x()+editedEllipseItem->getNowRect().width();
+                if(editedEllipseItemRect.right() > maxX){
+                    maxX = editedEllipseItemRect.right();
                 }
-                if((editedEllipseItem->getNowRect().y()+editedEllipseItem->getNowRect().height()) > maxY){
-                    maxY = editedEllipseItem->getNowRect().y()+editedEllipseItem->getNowRect().height();
+                if(editedEllipseItemRect.bottom() > maxY){
+                    maxY = editedEllipseItemRect.bottom();
                 }
             }
         }

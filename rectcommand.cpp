@@ -23,7 +23,8 @@ void rectCommand::mousePressCommand(QMouseEvent *event){
 }
 
 void rectCommand::mouseMoveCommand(QMouseEvent *event){
-    screenshotView::getInstance()->getCurrentRectItem()->setRect(QRectF(commandManager::getInstance()->drawRectStart,event->pos()).normalized());
+    QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
+    screenshotView::getInstance()->getCurrentRectItem()->setRect(QRectF(commandManager::getInstance()->drawRectStart,event->pos()).normalized().intersected(selectRect  ));
 }
 
 void rectCommand::mouseReleaseCommand(QMouseEvent *event){
