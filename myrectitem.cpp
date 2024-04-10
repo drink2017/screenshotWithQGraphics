@@ -263,14 +263,6 @@ pointIn myRectItem::mousePointIn(QPointF pos){
     }
 }
 
-void myRectItem::setNowRect(QRectF nowRect){
-    this->nowRect = nowRect;
-}
-
-QRectF myRectItem::getNowRect(){
-    return nowRect;
-}
-
 
 
 

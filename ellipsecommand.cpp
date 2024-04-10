@@ -33,7 +33,6 @@ void ellipseCommand::mouseReleaseCommand(QMouseEvent *event){
     }
     myEllipseItem* newEllipseItem = new myEllipseItem(QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).intersected(screenshotView::getInstance()->getCurrentEllipseItem()->rect()));
     newEllipseItem->setPen(commandManager::getInstance()->ellipsePen);
-    newEllipseItem->setNowRect(newEllipseItem->rect());
     screenshotView::getInstance()->getScene()->addItem(newEllipseItem);
     screenshotView::getInstance()->getCurrentEllipseItem()->setRect(QRectF());
 

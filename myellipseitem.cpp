@@ -224,14 +224,6 @@ pointInEllipse myEllipseItem::mousePointIn(QPointF pos){
     }
 }
 
-void myEllipseItem::setNowRect(QRectF nowRect){
-    this->nowRect = nowRect;
-}
-
-QRectF myEllipseItem::getNowRect(){
-    return nowRect;
-}
-
 
 
 

@@ -396,7 +396,6 @@ void controlWidget::undo(){
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-                afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
@@ -412,7 +411,6 @@ void controlWidget::undo(){
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-                afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
@@ -504,7 +502,6 @@ void controlWidget::redo(){
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-                afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);
@@ -520,7 +517,6 @@ void controlWidget::redo(){
                 QRectF afterMoveRect = afterMoveItem->rect();
                 QPointF afterMovePos = afterMoveItem->pos();
                 afterMoveItem->setRect(beforeMoveItem->rect());
-                afterMoveItem->setNowRect(beforeMoveItem->mapToScene(beforeMoveItem->boundingRect()).boundingRect());
                 afterMoveItem->setPos(beforeMoveItem->pos());
                 afterMoveItem->updateEllipseHandles();
                 beforeMoveItem->setRect(afterMoveRect);

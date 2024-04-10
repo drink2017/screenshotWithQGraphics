@@ -34,7 +34,6 @@ void rectCommand::mouseReleaseCommand(QMouseEvent *event){
     }
     myRectItem* newRectItem = new myRectItem(QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).intersected(screenshotView::getInstance()->getCurrentRectItem()->rect()));
     newRectItem->setPen(commandManager::getInstance()->rectPen);
-    newRectItem->setNowRect(newRectItem->rect());
     screenshotView::getInstance()->getScene()->addItem(newRectItem);
     screenshotView::getInstance()->getCurrentRectItem()->setRect(QRectF());
 
