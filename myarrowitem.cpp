@@ -177,6 +177,29 @@ void myArrowItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(this->isSelected() && type == arrow_no){
         QGraphicsItem::mouseMoveEvent(event);
+
+        QRectF sceneRect = this->mapToScene(this->boundingRect()).boundingRect();
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+        if(sceneRect.left() < selectRect.left()){
+            this->setStart(QPoint(start_pos.x()+selectRect.left()-sceneRect.left(),start_pos.y()));
+            this->setEnd(QPoint(end_pos.x()+selectRect.left()-sceneRect.left(),end_pos.y()));
+            this->updateEllipseHandles();
+        }
+        if(sceneRect.top() < selectRect.top()){
+            this->setStart(QPoint(start_pos.x(),start_pos.y()+selectRect.top()-sceneRect.top()));
+            this->setEnd(QPoint(end_pos.x(),end_pos.y()+selectRect.top()-sceneRect.top()));
+            this->updateEllipseHandles();
+        }
+        if(sceneRect.right() > selectRect.right()){
+            this->setStart(QPoint(start_pos.x()+selectRect.right()-sceneRect.right(),start_pos.y()));
+            this->setEnd(QPoint(end_pos.x()+selectRect.right()-sceneRect.right(),end_pos.y()));
+            this->updateEllipseHandles();
+        }
+        if(sceneRect.bottom() > selectRect.bottom()){
+            this->setStart(QPoint(start_pos.x(),start_pos.y()+selectRect.bottom()-sceneRect.bottom()));
+            this->setEnd(QPoint(end_pos.x(),end_pos.y()+selectRect.bottom()-sceneRect.bottom()));
+            this->updateEllipseHandles();
+        }
     }
     if(type == arrow_start){
         setCursor(Qt::SizeVerCursor);
@@ -222,28 +245,6 @@ void myArrowItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     setCursor(Qt::ArrowCursor);
     if(this->isSelected()){
         QGraphicsItem::mouseReleaseEvent(event);
-        QRectF sceneRect = this->mapToScene(this->boundingRect()).boundingRect();
-        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
-        if(sceneRect.left() < selectRect.left()){
-            this->setStart(QPoint(start_pos.x()+selectRect.left()-sceneRect.left(),start_pos.y()));
-            this->setEnd(QPoint(end_pos.x()+selectRect.left()-sceneRect.left(),end_pos.y()));
-            this->updateEllipseHandles();
-        }
-        if(sceneRect.top() < selectRect.top()){
-            this->setStart(QPoint(start_pos.x(),start_pos.y()+selectRect.top()-sceneRect.top()));
-            this->setEnd(QPoint(end_pos.x(),end_pos.y()+selectRect.top()-sceneRect.top()));
-            this->updateEllipseHandles();
-        }
-        if(sceneRect.right() > selectRect.right()){
-            this->setStart(QPoint(start_pos.x()+selectRect.right()-sceneRect.right(),start_pos.y()));
-            this->setEnd(QPoint(end_pos.x()+selectRect.right()-sceneRect.right(),end_pos.y()));
-            this->updateEllipseHandles();
-        }
-        if(sceneRect.bottom() > selectRect.bottom()){
-            this->setStart(QPoint(start_pos.x(),start_pos.y()+selectRect.bottom()-sceneRect.bottom()));
-            this->setEnd(QPoint(end_pos.x(),end_pos.y()+selectRect.bottom()-sceneRect.bottom()));
-            this->updateEllipseHandles();
-        }
         commandManager::getInstance()->setEditingItem(false);
 
         order* moveOrder = undoManager::getInstance()->popOrder();
