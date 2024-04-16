@@ -86,6 +86,8 @@ void selectItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         setCursor(Qt::SizeBDiagCursor);
     }else if(handles[3].contains(event->pos()) || handles[7].contains(event->pos())){
         setCursor(Qt::SizeHorCursor);
+    }else if(QRectF(selectStart,selectEnd).contains(event->pos()) && commandManager::getInstance()->dragTotally == true){
+        setCursor(Qt::SizeAllCursor);
     }else{
         setCursor(Qt::ArrowCursor);
     }
@@ -122,6 +124,8 @@ changeSelectItemType selectItem::mousePointIn(QPointF pos){
         return RECT_BOTTOM_LEFT;
     }else if(handles[7].contains(pos)){
         return RECT_LEFT;
+    }else if(QRectF(selectStart,selectEnd).contains(pos)){
+        return RECT_IN;
     }else{
         return RECT_NO;
     }
@@ -130,7 +134,7 @@ changeSelectItemType selectItem::mousePointIn(QPointF pos){
 void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     type = mousePointIn(event->pos());
-    if(type != RECT_NO){
+    if(type != RECT_NO && type != RECT_IN){
         commandManager::getInstance()->disableDrawRect();
         commandManager::getInstance()->disableDrawEllipse();
         commandManager::getInstance()->disableDrawArrow();
@@ -327,6 +331,10 @@ void selectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
         }
     }
+    if(type == RECT_IN && commandManager::getInstance()->dragTotally == true){
+        dragTotallyStart = event->pos();
+        beforeSelectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+    }
     scene()->clearSelection();
 }
 
@@ -434,7 +442,14 @@ void selectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 screenshotView::getInstance()->setSelectStart(QPoint(event->pos().x(),oldSelectStart.y()));
             }
         }
-        if(type != RECT_NO){
+        if(type == RECT_IN && commandManager::getInstance()->dragTotally == true){
+            int y_offset = event->pos().y() - dragTotallyStart.y();
+            int x_offset = event->pos().x() - dragTotallyStart.x();
+            screenshotView::getInstance()->setSelectStart(QPoint(beforeSelectRect.x()+x_offset,beforeSelectRect.y()+y_offset));
+            screenshotView::getInstance()->setSelectEnd(QPoint(beforeSelectRect.right()+x_offset,beforeSelectRect.bottom()+y_offset));
+            this->setPath(getShadowPath(QPoint(beforeSelectRect.x()+x_offset,beforeSelectRect.y()+y_offset),QPoint(beforeSelectRect.right()+x_offset,beforeSelectRect.bottom()+y_offset)));
+        }
+        if((type != RECT_NO && type != RECT_IN) || (type == RECT_IN && commandManager::getInstance()->dragTotally == true)){
             updateRectHandles();
             screenshotView::getInstance()->getInfo()->updateInfoLabel();
             screenshotView::getInstance()->getControl()->updateButtonStatu();
@@ -469,6 +484,46 @@ void selectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             isChaningArea = false;
             updateSelectPoints();
         }
+    }
+    if(type == RECT_IN && commandManager::getInstance()->dragTotally == true){
+        QRectF selectRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd()).normalized();
+        int y_offset = event->pos().y() - dragTotallyStart.y();
+        int x_offset = event->pos().x() - dragTotallyStart.x();
+        if(selectRect.x() < 0 && selectRect.y() < 0){
+            screenshotView::getInstance()->setSelectStart(QPoint(0,0));
+            screenshotView::getInstance()->setSelectEnd(QPoint(selectRect.width(),selectRect.height()));
+            this->setPath(getShadowPath(QPoint(0,0),QPoint(selectRect.width(),selectRect.height())));
+        }else if(selectRect.x() < 0 && selectRect.bottom() > QGuiApplication::primaryScreen()->geometry().height()){
+            screenshotView::getInstance()->setSelectStart(QPoint(0,QGuiApplication::primaryScreen()->geometry().height()-selectRect.height()));
+            screenshotView::getInstance()->setSelectEnd(QPoint(selectRect.width(),QGuiApplication::primaryScreen()->geometry().height()));
+            this->setPath(getShadowPath(QPoint(0,QGuiApplication::primaryScreen()->geometry().height()-selectRect.height()),QPoint(selectRect.width(),QGuiApplication::primaryScreen()->geometry().height())));
+        }else if(selectRect.right() > QGuiApplication::primaryScreen()->geometry().width() && selectRect.y() < 0){
+            screenshotView::getInstance()->setSelectStart(QPoint(QGuiApplication::primaryScreen()->geometry().width()-selectRect.width(),0));
+            screenshotView::getInstance()->setSelectEnd(QPoint(QGuiApplication::primaryScreen()->geometry().width(),selectRect.height()));
+            this->setPath(getShadowPath(QPoint(QGuiApplication::primaryScreen()->geometry().width()-selectRect.width(),0),QPoint(QGuiApplication::primaryScreen()->geometry().width(),selectRect.height())));
+        }else if(selectRect.right() > QGuiApplication::primaryScreen()->geometry().width() && selectRect.bottom() > QGuiApplication::primaryScreen()->geometry().height()){
+            screenshotView::getInstance()->setSelectStart(QPoint(QGuiApplication::primaryScreen()->geometry().width()-selectRect.width(),QGuiApplication::primaryScreen()->geometry().height()-selectRect.height()));
+            screenshotView::getInstance()->setSelectEnd(QPoint(QGuiApplication::primaryScreen()->geometry().width(),QGuiApplication::primaryScreen()->geometry().height()));
+            this->setPath(getShadowPath(QPoint(QGuiApplication::primaryScreen()->geometry().width()-selectRect.width(),QGuiApplication::primaryScreen()->geometry().height()-selectRect.height()),QPoint(QGuiApplication::primaryScreen()->geometry().width(),QGuiApplication::primaryScreen()->geometry().height())));
+        }else if(selectRect.x() < 0){
+            screenshotView::getInstance()->setSelectStart(QPoint(0,beforeSelectRect.y()+y_offset));
+            screenshotView::getInstance()->setSelectEnd(QPoint(selectRect.width(),beforeSelectRect.y()+y_offset+selectRect.height()));
+            this->setPath(getShadowPath(QPoint(0,beforeSelectRect.y()+y_offset),QPoint(selectRect.width(),beforeSelectRect.y()+y_offset+selectRect.height())));
+        }else if(selectRect.y() < 0){
+            screenshotView::getInstance()->setSelectStart(QPoint(beforeSelectRect.x()+x_offset,0));
+            screenshotView::getInstance()->setSelectEnd(QPoint(beforeSelectRect.x()+x_offset+selectRect.width(),selectRect.height()));
+            this->setPath(getShadowPath(QPoint(beforeSelectRect.x()+x_offset,0),QPoint(beforeSelectRect.x()+x_offset+selectRect.width(),selectRect.height())));
+        }else if(selectRect.right() > QGuiApplication::primaryScreen()->geometry().width()){
+            screenshotView::getInstance()->setSelectStart(QPoint(QGuiApplication::primaryScreen()->geometry().width()-selectRect.width(),beforeSelectRect.y()+y_offset));
+            screenshotView::getInstance()->setSelectEnd(QPoint(QGuiApplication::primaryScreen()->geometry().width(),beforeSelectRect.y()+y_offset+selectRect.height()));
+            this->setPath(getShadowPath(QPoint(QGuiApplication::primaryScreen()->geometry().width()-selectRect.width(),beforeSelectRect.y()+y_offset),QPoint(QGuiApplication::primaryScreen()->geometry().width(),beforeSelectRect.y()+y_offset+selectRect.height())));
+        }else if(selectRect.bottom() > QGuiApplication::primaryScreen()->geometry().height()){
+            screenshotView::getInstance()->setSelectStart(QPoint(beforeSelectRect.x()+x_offset,QGuiApplication::primaryScreen()->geometry().height()-selectRect.height()));
+            screenshotView::getInstance()->setSelectEnd(QPoint(beforeSelectRect.x()+x_offset+selectRect.width(),QGuiApplication::primaryScreen()->geometry().height()));
+            this->setPath(getShadowPath(QPoint(beforeSelectRect.x()+x_offset,QGuiApplication::primaryScreen()->geometry().height()-selectRect.height()),QPoint(beforeSelectRect.x()+x_offset+selectRect.width(),QGuiApplication::primaryScreen()->geometry().height())));
+        }
+        updateRectHandles();
+        screenshotView::getInstance()->getInfo()->updateInfoLabel();
     }
     screenshotView::getInstance()->getControl()->setLocation(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
     screenshotView::getInstance()->getControl()->show();

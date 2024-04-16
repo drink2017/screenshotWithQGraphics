@@ -34,6 +34,8 @@ screenshotView::screenshotView()
     scene->addItem(currentArrowItem);
     currentArrowItem->setFlag(QGraphicsItem::ItemIsMovable,false);
     scene->addItem(currentPenItem);
+
+    setRenderHint(QPainter::Antialiasing);
 }
 
 screenshotView* screenshotView::getInstance(){

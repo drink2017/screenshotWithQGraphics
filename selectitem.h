@@ -12,6 +12,7 @@ enum changeSelectItemType{
     RECT_BOTTOM,
     RECT_BOTTOM_LEFT,
     RECT_LEFT,
+    RECT_IN,
     RECT_NO
 };
 
@@ -24,6 +25,9 @@ public:
     void setHover(bool setAccept);
 
     void setFinishSelect();
+
+    QPointF dragTotallyStart;
+    QRectF beforeSelectRect;
 
 private:
     QList<QGraphicsRectItem*> rectHandles;

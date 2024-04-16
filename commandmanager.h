@@ -43,6 +43,8 @@ public:
 
     int number = 1;
 
+    bool dragTotally = true;
+
 private:
     static commandManager* instance;
     explicit commandManager(QObject *parent = nullptr);

@@ -221,6 +221,7 @@ void controlWidget::rectButtonStatu(){
         emit disableDrawPen();
         emit disableDrawText();
         emit disableDrawNumber();
+        commandManager::getInstance()->dragTotally = false;
         myTextWidget->hide();
         myColorWidget->setType(widgetType::rect);
         myColorWidget->show();
@@ -248,6 +249,7 @@ void controlWidget::roundButtonStatu(){
         emit disableDrawPen();
         emit disableDrawText();
         emit disableDrawNumber();
+        commandManager::getInstance()->dragTotally = false;
         myTextWidget->hide();
         myColorWidget->setType(widgetType::ellipse);
         myColorWidget->show();
@@ -275,6 +277,7 @@ void controlWidget::arrowButtonStatu(){
         emit disableDrawPen();
         emit disableDrawText();
         emit disableDrawNumber();
+        commandManager::getInstance()->dragTotally = false;
         myTextWidget->hide();
         myColorWidget->setType(widgetType::arrow);
         myColorWidget->show();
@@ -302,6 +305,7 @@ void controlWidget::penButtonStatu(){
         emit disableDrawArrow();
         emit disableDrawText();
         emit disableDrawNumber();
+        commandManager::getInstance()->dragTotally = false;
         myTextWidget->hide();
         myColorWidget->setType(widgetType::pen);
         myColorWidget->show();
@@ -329,6 +333,7 @@ void controlWidget::textButtonStatu(){
         emit disableDrawPen();
         emit enableDrawText();
         emit disableDrawNumber();
+        commandManager::getInstance()->dragTotally = false;
         myColorWidget->hide();
         myTextWidget->setType(textWidgetType::text);
         myTextWidget->show();
@@ -356,6 +361,7 @@ void controlWidget::numberButtonStatu(){
         emit disableDrawPen();
         emit disableDrawText();
         emit enableDrawNumber();
+        commandManager::getInstance()->dragTotally = false;
         myColorWidget->hide();
         myTextWidget->setType(textWidgetType::serial);
         myTextWidget->show();
