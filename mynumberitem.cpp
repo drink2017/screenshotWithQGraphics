@@ -11,6 +11,7 @@
 myNumberItem::myNumberItem(int number,QGraphicsItem* parent):QGraphicsItemGroup(parent)
 {
     setHandlesChildEvents(false);
+    setAcceptHoverEvents(true);
 
     ellipse = new QGraphicsEllipseItem(-15,-15,30,30,this);
     ellipse->setBrush(QBrush(screenshotView::getInstance()->getControl()->myTextWidget->settings->getNumberColor()));
@@ -105,4 +106,10 @@ void myNumberItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         undoManager::getInstance()->pushOrder(moveOrder);
         redoManager::getInstance()->clear();
     }
+}
+
+void myNumberItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    setCursor(Qt::SizeAllCursor);
 }
