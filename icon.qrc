@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>controlWidget/arrow.png</file>
+        <file>controlWidget/ellipse.png</file>
+        <file>controlWidget/ok.png</file>
+        <file>controlWidget/pen.png</file>
+        <file>controlWidget/rectangle.png</file>
+        <file>controlWidget/redo.png</file>
+        <file>controlWidget/serial.png</file>
+        <file>controlWidget/text.png</file>
+        <file>controlWidget/undo.png</file>
+    </qresource>
+</RCC>

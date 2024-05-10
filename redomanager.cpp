@@ -1,4 +1,4 @@
-#include "redomanager.h"
+﻿#include "redomanager.h"
 
 redoManager* redoManager::instance = nullptr;
 

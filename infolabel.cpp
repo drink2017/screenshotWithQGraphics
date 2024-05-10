@@ -1,8 +1,15 @@
-#include "infolabel.h"
+﻿#include "infolabel.h"
 #include "screenshotview.h"
+
+#include <QPalette>
 
 infoLabel::infoLabel()
 {
+    QPalette palette;
+    palette.setColor(QPalette::Background,Qt::black);
+    palette.setColor(QPalette::WindowText,Qt::white);
+    setPalette(palette);
+
     setWindowFlags(Qt::FramelessWindowHint);
     setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
     QPoint selectStart = screenshotView::getInstance()->getSelectStart();

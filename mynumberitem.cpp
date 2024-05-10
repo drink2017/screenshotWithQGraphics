@@ -1,4 +1,4 @@
-#include "mynumberitem.h"
+﻿#include "mynumberitem.h"
 #include "screenshotview.h"
 #include "commandmanager.h"
 #include "order.h"
@@ -13,16 +13,16 @@ myNumberItem::myNumberItem(int number,QGraphicsItem* parent):QGraphicsItemGroup(
     setHandlesChildEvents(false);
     setAcceptHoverEvents(true);
 
-    ellipse = new QGraphicsEllipseItem(-15,-15,30,30,this);
+    ellipse = new QGraphicsEllipseItem(-11,-11,22,22,this);
     ellipse->setBrush(QBrush(screenshotView::getInstance()->getControl()->myTextWidget->settings->getNumberColor()));
 
     serial = new QGraphicsSimpleTextItem(QString::number(number),this);
     if(number < 10){
-        serial->setPos(-8,-16);
-        serial->setFont(QFont("Arial",15));
+        serial->setPos(-6,-12);
+        serial->setFont(QFont("Arial",11));
     }else{
-        serial->setPos(-12,-12);
-        serial->setFont(QFont("ARial",12));
+        serial->setPos(-9,-9);
+        serial->setFont(QFont("ARial",9));
     }
     if(ellipse->brush().color() == Qt::white || ellipse->brush().color() == Qt::yellow){
         serial->setBrush(QColor(Qt::black));

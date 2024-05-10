@@ -1,4 +1,4 @@
-#include "selectitem.h"
+﻿#include "selectitem.h"
 #include "screenshotview.h"
 #include "commandmanager.h"
 #include "myrectitem.h"
@@ -19,15 +19,16 @@
 
 selectItem::selectItem()
 {
-    setPen(QPen(Qt::blue));
+    setPen(QPen(QColor(135, 206, 250)));
     setBrush(QBrush(QColor(0,0,0,100)));
     createRectHandles();
 }
 
 void selectItem::createRectHandles(){
     for(int i = 0;i < 8;i++){
-        QGraphicsRectItem* rectHandle = new QGraphicsRectItem(0,0,10,10,this);
-        rectHandle->setBrush(QBrush(Qt::blue));
+        QGraphicsRectItem* rectHandle = new QGraphicsRectItem(0,0,8,8,this);
+        rectHandle->setBrush(QBrush(QColor(135, 206, 250)));
+        rectHandle->setPen(QPen(QColor(135,206,250)));
         rectHandles.append(rectHandle);
     }
 
@@ -39,14 +40,14 @@ void selectItem::updateRectHandles(){
     QPoint selectStart = screenshot->getSelectStart();
     QPoint selectEnd = screenshot->getSelectEnd();
     QList<QRectF> handles = {
-        QRectF(selectStart.x()-5,selectStart.y()-5,10,10),
-        QRectF((selectStart.x()+selectEnd.x())/2-5,selectStart.y()-5,10,10),
-        QRectF(selectEnd.x()-5,selectStart.y()-5,10,10),
-        QRectF(selectEnd.x()-5,(selectStart.y()+selectEnd.y())/2-5,10,10),
-        QRectF(selectEnd.x()-5,selectEnd.y()-5,10,10),
-        QRectF((selectStart.x()+selectEnd.x())/2-5,selectEnd.y()-5,10,10),
-        QRectF(selectStart.x()-5,selectEnd.y()-5,10,10),
-        QRectF(selectStart.x()-5,(selectStart.y()+selectEnd.y())/2-5,10,10)
+        QRectF(selectStart.x()-4,selectStart.y()-4,8,8),
+        QRectF((selectStart.x()+selectEnd.x())/2-4,selectStart.y()-4,8,8),
+        QRectF(selectEnd.x()-4,selectStart.y()-4,8,8),
+        QRectF(selectEnd.x()-4,(selectStart.y()+selectEnd.y())/2-4,8,8),
+        QRectF(selectEnd.x()-4,selectEnd.y()-4,8,8),
+        QRectF((selectStart.x()+selectEnd.x())/2-4,selectEnd.y()-4,8,8),
+        QRectF(selectStart.x()-4,selectEnd.y()-4,8,8),
+        QRectF(selectStart.x()-4,(selectStart.y()+selectEnd.y())/2-4,8,8)
     };
 
     for(int i = 0;i < handles.size();i++){
@@ -68,14 +69,14 @@ void selectItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     QPoint selectStart = screenshot->getSelectStart();
     QPoint selectEnd = screenshot->getSelectEnd();
     QList<QRectF> handles = {
-        QRectF(selectStart.x()-5,selectStart.y()-5,10,10),
-        QRectF((selectStart.x()+selectEnd.x())/2-5,selectStart.y()-5,10,10),
-        QRectF(selectEnd.x()-5,selectStart.y()-5,10,10),
-        QRectF(selectEnd.x()-5,(selectStart.y()+selectEnd.y())/2-5,10,10),
-        QRectF(selectEnd.x()-5,selectEnd.y()-5,10,10),
-        QRectF((selectStart.x()+selectEnd.x())/2-5,selectEnd.y()-5,10,10),
-        QRectF(selectStart.x()-5,selectEnd.y()-5,10,10),
-        QRectF(selectStart.x()-5,(selectStart.y()+selectEnd.y())/2-5,10,10)
+        QRectF(selectStart.x()-4,selectStart.y()-4,8,8),
+        QRectF((selectStart.x()+selectEnd.x())/2-4,selectStart.y()-4,8,8),
+        QRectF(selectEnd.x()-4,selectStart.y()-4,8,8),
+        QRectF(selectEnd.x()-4,(selectStart.y()+selectEnd.y())/2-4,8,8),
+        QRectF(selectEnd.x()-4,selectEnd.y()-4,8,8),
+        QRectF((selectStart.x()+selectEnd.x())/2-4,selectEnd.y()-4,8,8),
+        QRectF(selectStart.x()-4,selectEnd.y()-4,8,8),
+        QRectF(selectStart.x()-4,(selectStart.y()+selectEnd.y())/2-4,8,8)
     };
 
     if(handles[0].contains(event->pos()) || handles[4].contains(event->pos())){
@@ -98,14 +99,14 @@ changeSelectItemType selectItem::mousePointIn(QPointF pos){
     QPoint selectStart = screenshot->getSelectStart();
     QPoint selectEnd = screenshot->getSelectEnd();
     QList<QRectF> handles = {
-        QRectF(selectStart.x()-5,selectStart.y()-5,10,10),
-        QRectF((selectStart.x()+selectEnd.x())/2-5,selectStart.y()-5,10,10),
-        QRectF(selectEnd.x()-5,selectStart.y()-5,10,10),
-        QRectF(selectEnd.x()-5,(selectStart.y()+selectEnd.y())/2-5,10,10),
-        QRectF(selectEnd.x()-5,selectEnd.y()-5,10,10),
-        QRectF((selectStart.x()+selectEnd.x())/2-5,selectEnd.y()-5,10,10),
-        QRectF(selectStart.x()-5,selectEnd.y()-5,10,10),
-        QRectF(selectStart.x()-5,(selectStart.y()+selectEnd.y())/2-5,10,10)
+        QRectF(selectStart.x()-4,selectStart.y()-4,8,8),
+        QRectF((selectStart.x()+selectEnd.x())/2-4,selectStart.y()-4,8,8),
+        QRectF(selectEnd.x()-4,selectStart.y()-4,8,8),
+        QRectF(selectEnd.x()-4,(selectStart.y()+selectEnd.y())/2-4,8,8),
+        QRectF(selectEnd.x()-4,selectEnd.y()-4,8,8),
+        QRectF((selectStart.x()+selectEnd.x())/2-4,selectEnd.y()-4,8,8),
+        QRectF(selectStart.x()-4,selectEnd.y()-4,8,8),
+        QRectF(selectStart.x()-4,(selectStart.y()+selectEnd.y())/2-4,8,8)
     };
 
     if(handles[0].contains(pos)){
@@ -548,6 +549,11 @@ void selectItem::updateSelectPoints(){
     }
 }
 
+void selectItem::hideRectHandles(){
+    for(int i = 0;i < rectHandles.size();i++){
+        rectHandles[i]->hide();
+    }
+}
 
 
 

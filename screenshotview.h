@@ -1,4 +1,4 @@
-#ifndef SCREENSHOTVIEW_H
+﻿#ifndef SCREENSHOTVIEW_H
 #define SCREENSHOTVIEW_H
 
 #include "selectitem.h"
@@ -9,11 +9,17 @@
 
 #include <QGraphicsView>
 
+enum shotType{
+    newShot,
+    replace
+};
+
 class screenshotView : public QGraphicsView
 {
     Q_OBJECT
 public:
     static screenshotView* getInstance();
+    static void releaseInstance();
 
     QPoint getSelectStart();
     QPoint getSelectEnd();
@@ -36,6 +42,12 @@ public:
     QGraphicsEllipseItem* getCurrentEllipseItem();
     myArrowItem* getCurrentArrowItem();
     QGraphicsPathItem* getCurrentPenItem();
+
+    void hideSelectRectHandles();
+
+    shotType type;
+    void setType(shotType type);
+    shotType getType();
 
 private:
     static screenshotView* instance;
@@ -73,6 +85,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 };
 
 #endif // SCREENSHOTVIEW_H

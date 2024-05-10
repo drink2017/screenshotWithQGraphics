@@ -22,6 +22,7 @@ public:
     selectItem();
     void updateRectHandles();
     QList<QGraphicsRectItem*> getRectHandles();
+    void hideRectHandles();
     void setHover(bool setAccept);
 
     void setFinishSelect();

@@ -1,4 +1,4 @@
-#include "colorwidget.h"
+﻿#include "colorwidget.h"
 #include "screenshotview.h"
 
 #include <QDebug>

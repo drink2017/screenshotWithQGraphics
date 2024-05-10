@@ -1,4 +1,4 @@
-#include "screenshotview.h"
+﻿#include "screenshotview.h"
 #include "commandmanager.h"
 #include "mytextitem.h"
 #include "mynumberitem.h"
@@ -36,6 +36,8 @@ screenshotView::screenshotView()
     scene->addItem(currentPenItem);
 
     setRenderHint(QPainter::Antialiasing);
+
+    setCursor(Qt::CrossCursor);
 }
 
 screenshotView* screenshotView::getInstance(){
@@ -43,6 +45,13 @@ screenshotView* screenshotView::getInstance(){
         instance = new screenshotView();
     }
     return instance;
+}
+
+void screenshotView::releaseInstance(){
+    if(instance != nullptr){
+        delete instance;
+        instance = nullptr;
+    }
 }
 
 
@@ -206,6 +215,40 @@ myArrowItem* screenshotView::getCurrentArrowItem(){
 QGraphicsPathItem* screenshotView::getCurrentPenItem(){
     return currentPenItem;
 }
+
+void screenshotView::hideSelectRectHandles(){
+    currentSelectItem->hideRectHandles();
+}
+
+void screenshotView::setType(shotType type){
+    this->type = type;
+}
+
+shotType screenshotView::getType(){
+    return type;
+}
+
+void screenshotView::wheelEvent(QWheelEvent *event)
+{
+    (void)event;
+}
+
+void screenshotView::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Escape){
+        commandManager::getInstance()->quit();
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

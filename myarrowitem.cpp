@@ -1,3 +1,5 @@
+﻿#define _USE_MATH_DEFINES
+
 #include "myarrowitem.h"
 #include "screenshotview.h"
 #include "commandmanager.h"
@@ -35,26 +37,33 @@ void myArrowItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
     Q_UNUSED(widget);
 
-    arrowPen.setCapStyle(Qt::RoundCap);
+    arrowPen.setCapStyle(Qt::FlatCap);
     painter->setPen(arrowPen);
+    painter->setBrush(QBrush(arrowPen.color()));
 
-    painter->drawLine(start_pos,end_pos);
-
-    int size = painter->pen().width() * 10;
-
-    double angle = std::atan2(-1.0 * (end_pos.y() - start_pos.y()), end_pos.x() - start_pos.x());
-    QPoint arrowP1 = end_pos.toPoint() + QPoint(-1 * size * std::cos(angle - M_PI / 6), size * std::sin(angle - M_PI / 6));
-    QPoint arrowP2 = end_pos.toPoint() + QPoint(-1 * size * std::cos(angle + M_PI / 6), size * std::sin(angle + M_PI / 6));
-
-    // 画箭头尖端
-    QPainterPath path;
-    path.moveTo(end_pos);
-    path.lineTo(arrowP1);
-    path.lineTo(arrowP2);
-    path.closeSubpath();
-
-    // 填充箭头尖端
-    painter->fillPath(path, painter->pen().color());
+    double par;
+    if(painter->pen().width() == 2){
+        par = 15;
+    }else if(painter->pen().width() == 4){
+        par = 20;
+    }else{
+        par = 25;
+    }
+    double slopy = atan2((end_pos.y() - start_pos.y()), (end_pos.x() - start_pos.x()));
+    double cosy = cos(slopy);
+    double siny = sin(slopy);
+    QPoint point1 = QPoint(end_pos.x() + int(-par*cosy - (par / 2.0*siny)), end_pos.y() + int(-par*siny + (par / 2.0*cosy)));
+    QPoint point2 = QPoint(end_pos.x() + int(-par*cosy + (par / 2.0*siny)), end_pos.y() - int(par / 2.0*cosy + par*siny));
+    QPoint points[3] = { end_pos.toPoint(), point1, point2 };
+    painter->setRenderHint(QPainter::Antialiasing, true);//消锯齿
+    painter->drawPolygon(points, 3);//绘制箭头部分
+    int offsetX = int(par*siny / 3);
+    int offsetY = int(par*cosy / 3);
+    QPoint point3, point4;
+    point3 = QPoint(end_pos.x() + int(-par*cosy - (par / 2.0*siny)) + offsetX, end_pos.y() + int(-par*siny + (par / 2.0*cosy)) - offsetY);
+    point4 = QPoint(end_pos.x() + int(-par*cosy + (par / 2.0*siny) - offsetX), end_pos.y() - int(par / 2.0*cosy + par*siny) + offsetY);
+    QPoint arrowBodyPoints[3] = { start_pos.toPoint(), point3, point4 };
+    painter->drawPolygon(arrowBodyPoints, 3);//绘制箭身部分
 
     if(option->state & QStyle::State_Selected){
         showEllipseHandles();

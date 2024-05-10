@@ -59,6 +59,7 @@ public slots:
     void numberButtonStatu();
     void undo();
     void redo();
+    void shot();
 
 signals:
     void enableDrawRect();

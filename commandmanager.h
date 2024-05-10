@@ -1,4 +1,4 @@
-#ifndef COMMANDMANAGER_H
+﻿#ifndef COMMANDMANAGER_H
 #define COMMANDMANAGER_H
 
 #include <QObject>
@@ -44,6 +44,11 @@ public:
     int number = 1;
 
     bool dragTotally = true;
+
+    QList<QPixmap> screenshots;
+    QList<QString> headlines;
+
+    int screenshotValue;
 
 private:
     static commandManager* instance;

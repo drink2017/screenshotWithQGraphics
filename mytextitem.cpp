@@ -1,4 +1,4 @@
-#include "mytextitem.h"
+﻿#include "mytextitem.h"
 #include "commandmanager.h"
 #include "screenshotview.h"
 #include "undomanager.h"
@@ -109,4 +109,21 @@ void myTextItem::focusOutEvent(QFocusEvent *event)
             myRedoManager->clear();
         }
     }
+}
+
+void myTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    QRectF textRect = boundingRect();
+    //QRectF backgroundRect = textRect.adjusted(-10, -5, 10, 5); // 在文字周围增加一些内边距
+
+    // 绘制背景矩形
+    //painter->setBrush(QBrush(QColor(0, 0, 0, 180))); // 设置半透明黑色背景
+    painter->setBrush(QBrush(Qt::white));
+    painter->setPen(Qt::NoPen);
+    //painter->drawRect(backgroundRect);
+    painter->drawRect(textRect);
+
+    QGraphicsTextItem::paint(painter,option,widget);
+
+    screenshotView::getInstance()->getScene()->update();
 }

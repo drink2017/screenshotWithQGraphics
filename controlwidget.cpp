@@ -1,4 +1,4 @@
-#include "controlwidget.h"
+﻿#include "controlwidget.h"
 #include "screenshotview.h"
 #include "undomanager.h"
 #include "redomanager.h"
@@ -14,6 +14,8 @@
 #include <QApplication>
 #include <QStyle>
 #include <QDebug>
+#include <QTimer>
+#include <QDateTime>
 
 controlWidget::controlWidget(QWidget *parent) : QWidget(parent)
 {
@@ -115,7 +117,7 @@ void controlWidget::setButtons(){
     pRectButton->setToolTip("矩形");
     pRectButton->setCheckable(true);
     pRectButton->setChecked(false);
-    QIcon rectIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\rectangle.png");
+    QIcon rectIcon(":/controlWidget/rectangle.png");
     pRectButton->setIcon(rectIcon);
 
     pRoundButton = new QPushButton(this);
@@ -123,7 +125,7 @@ void controlWidget::setButtons(){
     pRoundButton->setFixedSize(QSize(32,32));
     pRoundButton->setCheckable(true);
     pRoundButton->setChecked(false);
-    QIcon roundIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\dry-clean.png");
+    QIcon roundIcon(":/controlWidget/ellipse.png");
     pRoundButton->setIcon(roundIcon);
 
     pArrowButton = new QPushButton(this);
@@ -131,7 +133,7 @@ void controlWidget::setButtons(){
     pArrowButton->setToolTip("箭头");
     pArrowButton->setCheckable(true);
     pArrowButton->setChecked(false);
-    QIcon arrowIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\right-arrow.png");
+    QIcon arrowIcon(":/controlWidget/arrow.png");
     pArrowButton->setIcon(arrowIcon);
 
     pPenButton = new QPushButton(this);
@@ -139,7 +141,7 @@ void controlWidget::setButtons(){
     pPenButton->setToolTip("画笔");
     pPenButton->setCheckable(true);
     pPenButton->setChecked(false);
-    QIcon penIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\pen.png");
+    QIcon penIcon(":/controlWidget/pen.png");
     pPenButton->setIcon(penIcon);
 
     pTextButton = new QPushButton;
@@ -147,7 +149,7 @@ void controlWidget::setButtons(){
     pTextButton->setToolTip("文字");
     pTextButton->setCheckable(true);
     pTextButton->setChecked(false);
-    QIcon textIcon("E:\\software\\qt\\qtProjects\\screenshot3\\icon\\text.png");
+    QIcon textIcon(":/controlWidget/text.png");
     pTextButton->setIcon(textIcon);
 
     pSerialButton = new QPushButton;
@@ -155,19 +157,19 @@ void controlWidget::setButtons(){
     pSerialButton->setToolTip("序号笔");
     pSerialButton->setCheckable(true);
     pSerialButton->setChecked(false);
-    QIcon serialIcon("E:\\software\\qt\\qtProjects\\screenshot2\\icon\\serial.png");
+    QIcon serialIcon(":/controlWidget/serial.png");
     pSerialButton->setIcon(serialIcon);
 
     pUndoButton = new QPushButton;
     pUndoButton->setFixedSize(QSize(32,32));
     pUndoButton->setToolTip("撤销");
-    QIcon undoIcon = QApplication::style()->standardIcon(QStyle::SP_ArrowBack);
+    QIcon undoIcon(":/controlWidget/undo.png");
     pUndoButton->setIcon(undoIcon);
 
     pRedoButton = new QPushButton;
     pRedoButton->setToolTip("重做");
     pRedoButton->setFixedSize(QSize(32,32));
-    QIcon redoIcon = QApplication::style()->standardIcon(QStyle::SP_ArrowForward);
+    QIcon redoIcon(":/controlWidget/redo.png");
     pRedoButton->setIcon(redoIcon);
 
     pNOButton = new QPushButton;
@@ -178,9 +180,9 @@ void controlWidget::setButtons(){
 
     pOKButton = new QPushButton;
     pOKButton->setFixedSize(QSize(32,32));
-    QIcon okIcon = QApplication::style()->standardIcon(QStyle::SP_DialogApplyButton);
+    QIcon okIcon(":/controlWidget/ok.png");
     pOKButton->setIcon(okIcon);
-    pOKButton->setToolTip("复制到剪贴板");
+    pOKButton->setToolTip("确认截图");
 }
 
 void controlWidget::addButtonsToLayout(){
@@ -206,6 +208,7 @@ void controlWidget::connectToSlots(){
     connect(pUndoButton,&QPushButton::clicked,this,&controlWidget::undo);
     connect(pRedoButton,&QPushButton::clicked,this,&controlWidget::redo);
     connect(pNOButton,&QPushButton::clicked,this,&controlWidget::quit);
+    connect(pOKButton,&QPushButton::clicked,this,&controlWidget::shot);
 }
 
 void controlWidget::rectButtonStatu(){
@@ -583,6 +586,33 @@ void controlWidget::redo(){
             }
         }
     }
+}
+
+void controlWidget::shot(){
+    screenshotView::getInstance()->hideSelectRectHandles();
+    screenshotView::getInstance()->getInfo()->hide();
+    screenshotView::getInstance()->getControl()->hide();
+    screenshotView::getInstance()->getControl()->myTextWidget->hide();
+    screenshotView::getInstance()->getControl()->myColorWidget->hide();
+
+    //等待rectHandles被隐藏了再截屏
+    QEventLoop loop;
+    QTimer::singleShot(0.0000000000000000000000000000000000000000000000000000000000000000000000000001, &loop, &QEventLoop::quit); //？？？？不加不行
+    loop.exec();
+
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRectF captureRect = QRectF(screenshotView::getInstance()->getSelectStart(),screenshotView::getInstance()->getSelectEnd());
+    QPixmap screenshot = screen->grabWindow(0,captureRect.x(),captureRect.y(),captureRect.width(),captureRect.height());
+    if(screenshotView::getInstance()->getType() == shotType::newShot){
+        commandManager::getInstance()->screenshots.append(screenshot);
+        QDateTime currentDateTime = QDateTime::currentDateTime();
+        commandManager::getInstance()->headlines.append(currentDateTime.toString());
+    }else if(screenshotView::getInstance()->getType() == shotType::replace){
+        commandManager::getInstance()->screenshots.replace(commandManager::getInstance()->screenshotValue,screenshot);
+        QDateTime currentDateTime = QDateTime::currentDateTime();
+        commandManager::getInstance()->headlines.replace(commandManager::getInstance()->screenshotValue,currentDateTime.toString());
+    }
+    commandManager::getInstance()->quit();
 }
 
 QRect controlWidget::getLocationRect(){

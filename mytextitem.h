@@ -1,4 +1,4 @@
-#ifndef MYTEXTITEM_H
+﻿#ifndef MYTEXTITEM_H
 #define MYTEXTITEM_H
 
 #include <QGraphicsTextItem>
@@ -18,6 +18,10 @@ protected:
 
 public slots:
     void adjustTextWidth();
+
+    // QGraphicsItem interface
+public:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 };
 
 #endif // MYTEXTITEM_H

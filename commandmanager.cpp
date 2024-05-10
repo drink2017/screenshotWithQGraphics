@@ -1,7 +1,8 @@
-#include "commandmanager.h"
+﻿#include "commandmanager.h"
 #include "screenshotview.h"
 
 #include <QApplication>
+#include <QDebug>
 
 commandManager* commandManager::instance = nullptr;
 
@@ -146,5 +147,22 @@ void commandManager::disableDrawNumber(){
 }
 
 void commandManager::quit(){
-    QApplication::quit();
+    if(screenshotView::getInstance()->getControl() && screenshotView::getInstance()->getInfo()){
+        delete screenshotView::getInstance()->getControl()->myColorWidget;
+        delete screenshotView::getInstance()->getControl()->myTextWidget;
+        delete screenshotView::getInstance()->getInfo();
+    }
+    screenshotView::releaseInstance();
+
+    //属性初始化
+    selectingArea = true;
+    drawingRect = false;
+    editingItem = false;
+    drawingEllipse = false;
+    drawingArrow = false;
+    drawingPen = false;
+    drawingText = false;
+    drawingNumber = false;
+    number = 1;
+    dragTotally = true;
 }

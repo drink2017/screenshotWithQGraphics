@@ -1,4 +1,4 @@
-#include "selectcommand.h"
+﻿#include "selectcommand.h"
 #include "screenshotview.h"
 #include "commandmanager.h"
 
@@ -34,9 +34,11 @@ void selectCommand::mouseReleaseCommand(QMouseEvent *event){
     currentSelectItem->setHover(true);
     currentSelectItem->setFinishSelect();
     commandManager::getInstance()->setSelectingArea(false);
-    screenshotView::getInstance()->setControl(new controlWidget());
+    screenshotView::getInstance()->setControl(new controlWidget(screenshotView::getInstance()));
     commandManager::getInstance()->connectToControlWidget();
     screenshotView::getInstance()->getControl()->show();
+
+    screenshotView::getInstance()->setCursor(Qt::ArrowCursor);
 }
 
 selectCommand::~selectCommand(){
